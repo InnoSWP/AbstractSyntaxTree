@@ -26,10 +26,6 @@
         box-sizing: border-box;
         font-family: monospace;
         flex: 1;
-        display: block;
-        margin-inline-start: 0px;
-        margin-inline-end: 0px;
-        padding-inline-start: 40px;
     }
 
     :global(li.entry) {
