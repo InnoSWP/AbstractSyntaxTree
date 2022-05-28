@@ -4,14 +4,20 @@
   "scripts": {
     "build": "NODE_ENV=production rollup -c",
     "dev": "rollup -c -w",
-    "start": "sirv public",
+    "start": "sirv public -p 8080",
     "validate": "svelte-check"
   },
   "devDependencies": {
+    "@codemirror/basic-setup": "^0.20.0",
+    "@codemirror/commands": "^0.20.0",
+    "@codemirror/lang-javascript": "^0.20.0",
+    "@codemirror/language": "^0.20.2",
+    "@lezer/highlight": "^0.16.0",
     "@rollup/plugin-commonjs": "^17.0.0",
     "@rollup/plugin-node-resolve": "^11.0.0",
     "@rollup/plugin-typescript": "^8.1.0",
     "@tsconfig/svelte": "^1.0.0",
+    "@types/esprima": "^4.0.3",
     "autoprefixer": "^10.2.3",
     "postcss": "^8.2.4",
     "rollup": "^2.3.4",
@@ -29,6 +35,8 @@
     "typescript": "^4.1.3"
   },
   "dependencies": {
+    "@lezer/javascript": "^0.16.0",
+    "esprima": "^4.0.1",
     "sirv-cli": "^1.0.0"
   }
 }
