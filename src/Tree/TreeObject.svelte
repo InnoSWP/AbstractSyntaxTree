@@ -2,6 +2,7 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
+    import { highlight, deselectAll} from '../App.svelte';
 
     export let obj
     export let expanded = true
@@ -27,8 +28,8 @@
     }
 </script>
 
-<li class="entry togglable {expanded ? "open" : ""}" >
-    <span class="value" on:click={toggle}>
+<li class="entry togglable {expanded ? "open" : ""}">
+    <span class="value" on:click={toggle} on:mouseenter={() => highlight({from: obj.range[0], to: obj.range[1]})} on:mouseleave={()=>deselectAll()}>
         <span class="tokenName nc">
             {obj.type}
         </span>
@@ -39,9 +40,9 @@
             {#each Object.entries(obj) as e}
                 {#if isPrimitive(e[1])}
                     <TreePrimitive key={e[0]} value={e[1]}/>
-                {:else if Array.isArray(e[1])}
-                    <TreeArray key={e[0]} value={e[1]} />
-                {:else if isObject(e[1])}
+                {:else if Array.isArray(e[1]) && e[0] != 'range'}
+                    <TreeArray key={e[0]} value={e[1]}/>
+                {:else if e[0] != 'range'}
                     <svelte:self obj={e[1]} />
                 {/if}
             {/each}

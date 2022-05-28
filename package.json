@@ -4,7 +4,7 @@
   "scripts": {
     "build": "NODE_ENV=production rollup -c --environment dir:public",
     "deploy": "NODE_ENV=production rollup -c --environment dir:docs",
-    "dev": "rollup -c -w",
+    "dev": "rollup -c -w --environment dir:public",
     "start": "sirv public -p 8080",
     "validate": "svelte-check"
   },

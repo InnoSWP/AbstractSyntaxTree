@@ -6,7 +6,7 @@
 <div class="tree-representation overflow-scroll h-screen">
     <ul>
         {#if tree != null}
-            <TreeObject obj={tree} />
+            <TreeObject obj={tree}/>
         {/if}
     </ul>
 </div>
@@ -53,7 +53,11 @@
         cursor: pointer;
     }
 
-    :global(.tokenName, .entry.togglable) {
+    :global(.tokenName:hover, .entry.togglable > .key:hover > .name) {
+        text-decoration: underline;
+    }
+
+    :global(.tokenName) {
         cursor: pointer;
     }
 
