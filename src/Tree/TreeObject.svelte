@@ -1,6 +1,7 @@
 <script lang="ts">
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
+    import { slide } from 'svelte/transition';
 
     export let obj
     export let expanded = true
@@ -34,7 +35,7 @@
     </span>
     <span class="prefix p">{' {'}</span>
     {#if expanded}
-        <ul class="value-body">
+        <ul class="value-body" transition:slide|local>
             {#each Object.entries(obj) as e}
                 {#if isPrimitive(e[1])}
                     <TreePrimitive key={e[0]} value={e[1]}/>

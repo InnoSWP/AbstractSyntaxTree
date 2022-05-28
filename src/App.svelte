@@ -3,22 +3,18 @@
   import Logo from "./Logo.svelte";
   import Tailwind from "./Tailwind.svelte";
   import CodeMirror from "./CodeMirror.svelte";
-import TreeRepresentation from "./TreeRepresentation.svelte";
+  import TreeRepresentation from "./TreeRepresentation.svelte";
 
   let view
   let tree
 
-  let exampleTree = {
-    type: "Program",
-    a: 1,
-    b: "c"
-  }
+  let defaultDoc: string = 'const a = 1;\nlet f = (x) => {\nreturn 0 + a;\n}\nf(2)'
 </script>
 
 <Tailwind />
 
 <div class="h-screen flex items-stretch">
-  <CodeMirror classes="h-full w-1/3" bind:view bind:tree/>
+  <CodeMirror classes="h-full w-1/3" bind:view bind:tree doc={defaultDoc} />
   
   <div class="h-screen w-1/3 tree">
     <TreeRepresentation tree={tree} />

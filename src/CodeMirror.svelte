@@ -8,10 +8,12 @@
 
     onMount(() => {
         createEditor()
+        tree = parseModule(view.state.doc.toString())
     })
 
     export let view: EditorView = null
     export let classes: string = ""
+    export let doc: string = ""
 
     let root
     export let tree = null
@@ -33,7 +35,7 @@
                     javascript(),
                     keymap.of([indentWithTab]),
                 ],
-                doc: 'test',
+                doc: doc,
             }),
             parent: root,
         })

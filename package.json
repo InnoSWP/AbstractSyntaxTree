@@ -2,9 +2,10 @@
   "name": "svelte-app",
   "version": "1.0.0",
   "scripts": {
-    "build": "NODE_ENV=production rollup -c",
+    "build": "NODE_ENV=production rollup -c --environment dir:public",
+    "deploy": "NODE_ENV=production rollup -c --environment dir:docs",
     "dev": "rollup -c -w",
-    "start": "sirv docs -p 8080",
+    "start": "sirv public -p 8080",
     "validate": "svelte-check"
   },
   "devDependencies": {
