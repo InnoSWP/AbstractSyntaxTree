@@ -23,13 +23,18 @@
         return true;
     }
 
-    function isObject(val) {
-        return typeof val == "object";
+    function handleMouseEnter() {
+        console.log(obj)
+        highlight({from: obj.range[0], to: obj.range[1]})
+    }
+
+    function handleMouseLeave() {
+        deselectAll()
     }
 </script>
 
 <li class="entry togglable {expanded ? "open" : ""}">
-    <span class="value" on:click={toggle} on:mouseenter={() => highlight({from: obj.range[0], to: obj.range[1]})} on:mouseleave={()=>deselectAll()}>
+    <span class="value" on:click={toggle} on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
         <span class="tokenName nc">
             {obj.type}
         </span>

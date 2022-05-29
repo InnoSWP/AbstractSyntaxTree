@@ -22,7 +22,7 @@
     function updateHandle(v: ViewUpdate) {
         if(v.docChanged) {
             try {
-                tree = parseModule(view.state.doc.toString())
+                tree = parseModule(view.state.doc.toString(), { range: true })
             } catch {}
         }
     }
@@ -38,7 +38,6 @@
             if(update.transactions.length != 0) {
                 this.decorations = update.view.state.field(markerField)
             }
-            console.log(this.decorations)
         }
     }, {
         decorations: v => v.decorations
