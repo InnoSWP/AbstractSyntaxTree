@@ -2,7 +2,7 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
-    import { highlight, deselectAll} from '../App.svelte';
+    import { highlight, deselectAll} from '../MarkerPlugin.svelte';
 
     export let obj
     export let expanded = true
@@ -24,7 +24,6 @@
     }
 
     function handleMouseEnter() {
-        console.log(obj)
         highlight({from: obj.range[0], to: obj.range[1]})
     }
 
@@ -42,20 +41,16 @@
     <span class="prefix p">{' {'}</span>
     {#if expanded}
         <ul class="value-body" transition:slide|local>
-            {#each Object.entries(obj) as e}
-                {#if isPrimitive(e[1])}
-                    <TreePrimitive key={e[0]} value={e[1]}/>
-                {:else if Array.isArray(e[1]) && e[0] != 'range'}
-                    <TreeArray key={e[0]} value={e[1]}/>
-                {:else if e[0] != 'range'}
-                    <svelte:self obj={e[1]} />
+            {#each Object.entries(obj) as [k, v]}
+                {#if isPrimitive(v)}
+                    <TreePrimitive key={k} value={v}/>
+                {:else if Array.isArray(v) && k != 'range'}
+                    <TreeArray key={k} value={v}/>
+                {:else if k != 'range'}
+                    <svelte:self obj={v} />
                 {/if}
             {/each}
         </ul>
     {/if}
     <div class="suffix p">{'}'}</div>
 </li>
-
-<style lang="postcss">
-
-</style>

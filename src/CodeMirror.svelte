@@ -5,7 +5,7 @@
     import { indentWithTab } from '@codemirror/commands'
     import { javascript } from '@codemirror/lang-javascript'
     import { parseScript, parseModule } from 'esprima'
-    import { markerUpdate, markerField } from './App.svelte'
+    import { markerField, markerPlugin } from './MarkerPlugin.svelte'
 
     onMount(() => {
         createEditor()
@@ -27,21 +27,7 @@
         }
     }
 
-    const markerPlugin = ViewPlugin.fromClass(class {
-        decorations: DecorationSet
-
-        constructor(view: EditorView) {
-            this.decorations = view.state.field(markerField)
-        }
-
-        update(update: ViewUpdate) {
-            if(update.transactions.length != 0) {
-                this.decorations = update.view.state.field(markerField)
-            }
-        }
-    }, {
-        decorations: v => v.decorations
-    })
+    
 
     function createEditor() {
         view = new EditorView({
@@ -66,11 +52,10 @@
 
 <style lang="postcss">
     :global(.cm-editor) {
-        height:100%;
-        width: 100%;
+        @apply h-full w-full;
     }
 
     :global(.highlighted) {
-        background-color: rgb(253 230 138);
+        @apply bg-amber-300;
     }
 </style>

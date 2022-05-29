@@ -1,7 +1,7 @@
 <script lang="ts">
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
-    import { highlight, deselectAll } from '../App.svelte';
+    import { highlight, deselectAll } from '../MarkerPlugin.svelte'
 
     export let expanded = true
     export let key = "", value = []

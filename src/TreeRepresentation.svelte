@@ -13,83 +13,67 @@
 
 <style lang="postcss">
     .tree-representation {
-        display: flex;
-        flex-direction: column;
-        margin: 0;
-        padding-left: 20px;
-        overflow: auto;
+        @apply flex flex-col overflow-auto m-0 pl-5;
         background-color: #efefef;
     }
 
     ul {
-        cursor: default;
-        box-sizing: border-box;
-        font-family: monospace;
-        flex: 1;
+        @apply flex-1 cursor-default font-mono box-border;
     }
 
     :global(li.entry) {
+        @apply m-0 p-2 relative list-none;
+
         list-style-image: initial;
-        margin: 0;
-        list-style: none;
-        padding: 5px;
-        position: relative;
         text-align: match-parent;
     }
 
     :global(.entry.togglable::before) {
+        @apply absolute -left-3 text-green-500;
         content: '+';
-        color: green;
-        position: absolute;
-        left: -10px;
     }
 
     :global(.entry.togglable.open::before) {
+        @apply text-red-500;
         content: '-';
-        color: red;
     }
 
-    :global(.entry.togglable > .key) {
-        cursor: pointer;
+    :global(.entry.togglable > .key, .tokenName) {
+        @apply cursor-pointer;
     }
 
     :global(.tokenName:hover, .entry.togglable > .key:hover > .name) {
-        text-decoration: underline;
-    }
-
-    :global(.tokenName) {
-        cursor: pointer;
+        @apply underline;
     }
 
     :global(.nc) {
-        color: rgb(78, 150, 202);
+        @apply text-blue-400;
     }
 
     :global(.nb) {
-        color: goldenrod;
+        @apply text-amber-500;
     }
 
     :global(.p) {
-        color: darkgray;
+        @apply text-gray-400;
     }
 
     :global(.s) {
-        color: #2aa198;
+        @apply text-sky-400;
     }
 
     :global(.value) {
-        white-space: pre-wrap;
+        @apply whitespace-pre-wrap;
     }
 
     :global(.value-body) {
-        display: block;
+        @apply block pl-5;
         margin-inline-start: 0px;
         margin-inline-end: 0px;
         padding-inline-start: 40px;
 
         min-width: 300px;
         width: fit-content;
-        padding-left: 20px;
     }
 
 </style>
