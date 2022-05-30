@@ -2,12 +2,13 @@
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
     import { highlight, deselectAll } from '../MarkerPlugin.svelte'
+    import { arrayHighlight } from "../Stores.svelte";
 
-    export let expanded = true
-    export let key = "", value = []
+    export let expanded: boolean = true
+    export let key: string = "", value = []
     $: if(key == 'range') expanded = false;
 
-    function calculateRange(): {from: number, to:number} {
+    function calculateRange(): {from: number, to: number} {
         let from, to
         for(let el of value) {
             if(typeof el != 'object') {
@@ -31,7 +32,7 @@
         expanded = !expanded
     }
 
-    function isPrimitive(val) {
+    function isPrimitive(val): boolean {
         if(val == null) {
             return true;
         }
@@ -43,13 +44,24 @@
         return true;
     }
 
-    function isObject(val) {
+    function isObject(val): boolean {
         return typeof val == "object";
+    }
+
+    function handleMouseEnter() {
+        let range = calculateRange()
+        highlight(range)
+        arrayHighlight.set([range.from, range.to])
+    }
+
+    function handleMouseLeave() {
+        deselectAll()
+        arrayHighlight.set([0, 0])
     }
 </script>
 
 <li class="entry togglable {expanded ? "open" : ""}">
-    <span class="key" on:click={toggle} on:mouseenter={() => highlight(calculateRange())} on:mouseleave={()=>deselectAll()}>
+    <span class="key" on:click={toggle} on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
         <span class="name nb">
             {key}
         </span>
@@ -68,7 +80,7 @@
                         </span>
                     </li>
                 {:else}
-                    <TreeObject obj={e} />
+                    <TreeObject obj={e} expanded={false}/>
                 {/if}
             {/each}
         </ul>

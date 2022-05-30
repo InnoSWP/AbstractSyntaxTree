@@ -1,9 +1,10 @@
 <script lang="ts">
     import TreeObject from "./Tree/TreeObject.svelte";
-    export let tree = null;
+    import type { Program } from "esprima";
+    export let tree: Program = null;
 </script>
 
-<div class="tree-representation overflow-scroll h-screen">
+<div class="tree-representation overflow-scroll h-full">
     <ul>
         {#if tree != null}
             <TreeObject obj={tree}/>
@@ -13,29 +14,33 @@
 
 <style lang="postcss">
     .tree-representation {
-        @apply flex flex-col overflow-auto m-0 pl-5;
-        background-color: #efefef;
+        @apply flex flex-col m-0 pl-5 bg-treebg;
     }
 
     ul {
         @apply flex-1 cursor-default font-mono box-border;
     }
 
+    :global(span) {
+        @apply text-sm;
+    }
+
     :global(li.entry) {
-        @apply m-0 p-2 relative list-none;
+        @apply m-0 p-0 relative list-none;
 
         list-style-image: initial;
         text-align: match-parent;
     }
 
     :global(.entry.togglable::before) {
-        @apply absolute -left-3 text-green-500;
-        content: '+';
+        @apply absolute -left-4 top-1.5 w-3 h-3;
+        content: "";
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M9 5l7 7-7 7' /%3E%3C/svg%3E");
     }
 
     :global(.entry.togglable.open::before) {
-        @apply text-red-500;
-        content: '-';
+        content: "";
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' class='h-6 w-6' fill='none' viewBox='0 0 24 24' stroke='currentColor' stroke-width='2'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' d='M19 9l-7 7-7-7' /%3E%3C/svg%3E");
     }
 
     :global(.entry.togglable > .key, .tokenName) {
@@ -47,11 +52,11 @@
     }
 
     :global(.nc) {
-        @apply text-blue-400;
+        @apply text-keyword;
     }
 
     :global(.nb) {
-        @apply text-amber-500;
+        @apply text-identifier;
     }
 
     :global(.p) {
@@ -59,7 +64,7 @@
     }
 
     :global(.s) {
-        @apply text-sky-400;
+        @apply text-literal;
     }
 
     :global(.value) {
@@ -70,7 +75,7 @@
         @apply block pl-5;
         margin-inline-start: 0px;
         margin-inline-end: 0px;
-        padding-inline-start: 40px;
+        padding-inline-start: 30px;
 
         min-width: 300px;
         width: fit-content;

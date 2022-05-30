@@ -3,8 +3,10 @@
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
     import { highlight, deselectAll} from '../MarkerPlugin.svelte';
+    import type { Node } from 'estree';
+    import { arrayHighlight } from "../Stores.svelte";
 
-    export let obj
+    export let obj: Node
     export let expanded = true
 
     function toggle() {
@@ -24,10 +26,12 @@
     }
 
     function handleMouseEnter() {
+        arrayHighlight.set(obj.range)
         highlight({from: obj.range[0], to: obj.range[1]})
     }
 
     function handleMouseLeave() {
+        arrayHighlight.set([0, 0])
         deselectAll()
     }
 </script>

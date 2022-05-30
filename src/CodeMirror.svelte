@@ -1,10 +1,10 @@
 <script lang="ts">
     import { onMount } from 'svelte'
     import { EditorState, basicSetup } from '@codemirror/basic-setup'
-    import { EditorView, keymap, ViewUpdate, DecorationSet, ViewPlugin } from '@codemirror/view'
+    import { EditorView, keymap, ViewUpdate } from '@codemirror/view'
     import { indentWithTab } from '@codemirror/commands'
     import { javascript } from '@codemirror/lang-javascript'
-    import { parseScript, parseModule } from 'esprima'
+    import { parseScript, parseModule, Program } from 'esprima'
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
 
     onMount(() => {
@@ -17,19 +17,18 @@
     export let doc: string = ""
 
     let root
-    export let tree = null
+    export let tree: Program = null
 
-    function updateHandle(v: ViewUpdate) {
+    function updateHandle(v: ViewUpdate): void {
         if(v.docChanged) {
             try {
                 tree = parseModule(view.state.doc.toString(), { range: true })
             } catch {}
         }
     }
-
     
 
-    function createEditor() {
+    function createEditor(): void {
         view = new EditorView({
             state: EditorState.create({
                 extensions: [

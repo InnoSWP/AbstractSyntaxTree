@@ -1,0 +1,238 @@
+<script lang="ts">
+    import type { Program, Node } from "estree";
+    import { arrayHighlight } from "./Stores.svelte";
+
+    let hfrom: number, hto: number
+    $: [hfrom, hto] = $arrayHighlight
+
+    export let tree: Program = null
+    $: PDR = generatePDR(tree)
+
+    function inOrderTraversal(tree: Program): [number, string, string, [number, number]][] {
+        type entry = [number, string, string, [number, number]]
+
+        function aux(n: Node, depth: number, current: entry[]): entry[] {
+            if(n == null) {
+                return;
+            }
+            let value = extractValue(n);
+            current.push([depth, n.type, value, n.range]);
+            for(let child of extractChildren(n)) {
+                current.concat(aux(child, depth+1, current));
+            }
+            return current;
+        }
+
+        return aux(tree, 0, []);
+    }
+
+    function generateCoordinates(depths: number[]): number[][] {
+        let result: number[][] = []
+        let maxDepth = Math.max(...depths)
+        for(let d of depths) {
+            let newArr = Array(maxDepth + 1).fill(0)
+            newArr[d] = 1
+            result.push(newArr)
+        }
+        for(let i = 1; i < depths.length; i++) {
+            for(let j = 0; j < maxDepth+1; j++) {
+                result[i][j] += result[i - 1][j]
+            }
+        }
+
+        return result.map((e, i) => e.fill(0, depths[i]+1))
+    }
+
+    function generatePDR(tree: Program): [string, string, [number, number], ...number[]][] {
+        if(tree == null) {
+            return []
+        }
+        let initialArray: [number, string, string, [number, number]][] = inOrderTraversal(tree)
+        let depths = initialArray.map((v) => v[0])
+        let coords = generateCoordinates(depths)
+        
+        type entry = [string, string, [number, number], ...number[]]
+        let result = initialArray.map((e, i): entry => [e[1], e[2], e[3], ...coords[i]])
+        return result
+    }
+
+</script>
+
+<table class="min-w-full border text-center font-mono text-s">
+    <thead class="border-b">
+        <tr>
+            <th scope="col" class="text-gray-900 px-1 py-1 border-r w-0">
+                Type
+            </th>
+            <th scope="col" class="text-gray-900 px-1 py-1 border-r w-0">
+                Info
+            </th>
+            <th scope="colgroup" colspan={PDR.length - 2} class="text-sm text-gray-900 px-6 py-4 border-r">
+                Coordinates
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        {#each PDR as [type, info, [from, to], ...coords]}
+        <tr class={(hfrom <= from && to <= hto ? "highlighted" : "")}>
+            <td class="text-keyword font-light px-0 py-1 border-r border-b w-0">
+                {type}
+            </td>
+            <td class="text-literal font-light px-0 py-1 border-r border-b w-0">
+                {info}
+            </td>
+            {#each coords as c} 
+            <td class="text-gray-900 px-0 py-1 border-r border-b w-0">
+                {c}
+            </td>
+            {/each}
+        </tr>
+        {/each}
+    </tbody>
+</table>
+
+<style lang="postcss">
+    .highlighted {
+        @apply bg-amber-300;
+    }
+</style>
+
+<script lang="ts" context="module">
+    function extractValue(n: Node): string {
+        if(n == null) {
+            return "";
+        }
+        switch(n.type) {
+            case 'Identifier':
+                return n.name; // identifier's name
+            case 'Literal':
+                return n.value.toString(); // literal's value
+            case 'ExpressionStatement':
+                return extractValue(n.expression);
+            case 'BlockStatement':
+                return '';
+            case 'EmptyStatement':
+                return ';';
+            case 'DebuggerStatement':
+                return 'debugger';
+            case 'WithStatement':
+                return extractValue(n.object);
+            case 'LabeledStatement':
+            case 'BreakStatement':
+            case 'ContinueStatement':
+                return extractValue(n.label);
+            case 'SwitchStatement':
+                return extractValue(n.discriminant);
+            case 'CatchClause':
+                return extractValue(n.param);
+            case 'SwitchCase':
+            case  'IfStatement':
+            case 'WhileStatement':
+            case 'DoWhileStatement':
+                return extractValue(n.test);
+            case 'ForInStatement':
+                return extractValue(n.right);
+            case 'FunctionDeclaration':
+            case 'VariableDeclarator':
+                return extractValue(n.id);
+            case 'Property':
+                return extractValue(n.key);
+            case 'UnaryExpression':
+            case 'UpdateExpression':
+            case 'BinaryExpression':
+            case 'AssignmentExpression':
+            case 'LogicalExpression':
+                return n.operator;
+            case 'CallExpression':
+            case 'NewExpression':
+                return extractValue(n.callee);
+            case 'ThrowStatement':
+            case 'ReturnStatement':
+            case 'Program':
+            case 'TryStatement':
+            case 'ForStatement':
+            case 'VariableDeclaration':
+            case 'ThisExpression':
+            case 'ArrayExpression':
+            case 'ObjectExpression':
+            case 'FunctionExpression':
+            case 'MemberExpression':
+            case 'ConditionalExpression':
+            case 'SequenceExpression':
+            default:
+                return "";
+        }
+    }
+
+    function extractChildren(n: Node): (Node | null)[] {
+        switch(n.type) {
+            case 'BlockStatement':
+            case 'Program':
+                return n.body;
+            case 'ExpressionStatement':
+                return [n.expression];
+            case 'WithStatement':
+                return [n.object, n.body];
+            case 'ThrowStatement':
+            case 'ReturnStatement':
+                return [n.argument];
+            case 'LabeledStatement':
+                return [n.label, n.body];
+            case 'BreakStatement':
+                return [];
+            case 'ContinueStatement':
+                return [n.label];
+            case 'IfStatement':
+                return [n.test, n.consequent, n.alternate]
+            case 'SwitchStatement':
+                return [n.discriminant, ...n.cases];
+            case 'SwitchCase':
+                return [n.test, ...n.consequent];
+            case 'TryStatement':
+                return [n.block, n.handler, n.finalizer];
+            case 'CatchClause':
+                return [n.param, n.body];
+            case 'WhileStatement':
+            case  'DoWhileStatement':
+                return [n.test, n.body];
+            case 'ForStatement':
+                return [n.init, n.test, n.update, n.body];
+            case 'ForInStatement':
+                return [n.left, n.right, n.body];
+            case 'FunctionDeclaration':
+                return [n.id];
+            case 'VariableDeclaration':
+                return n.declarations;
+            case 'VariableDeclarator':
+                return [n.id, n.init];
+            case 'ArrayExpression':
+                return n.elements;
+            case 'ObjectExpression':
+                return n.properties;
+            case 'Property':
+                return [n.key, n.value];
+            case 'FunctionExpression':
+                return [n.id, ...n.params, n.body];
+            case 'ArrowFunctionExpression':
+                return [...n.params, n.body];
+            case 'UnaryExpression':
+            case 'UpdateExpression':
+                return [n.argument];
+            case 'BinaryExpression':
+            case 'AssignmentExpression':
+            case 'LogicalExpression':
+                return [n.left, n.right];
+            case 'MemberExpression':
+                return [n.object, n.property];
+            case 'ConditionalExpression':
+                return [n.test, n.consequent, n.alternate];
+            case 'CallExpression':
+            case 'NewExpression':
+                return [n.callee, ...n.arguments];
+            case 'SequenceExpression':
+                return n.expressions;
+        }
+
+        return [];
+    }
+</script>

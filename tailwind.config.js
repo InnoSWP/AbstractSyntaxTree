@@ -15,9 +15,10 @@ module.exports = {
       keyframes: true,
     },
   },
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
     colors: {
+      white: colors.white,
       sky: colors.sky,
       green: colors.green,
       red: colors.red,
@@ -25,6 +26,10 @@ module.exports = {
       yellow: colors.yellow,
       gray: colors.gray,
       amber: colors.amber,
+      identifier: '#00f',
+      literal: '#164',
+      keyword: '#708',
+      treebg: '#efefef',
     },
     extend: {},
   },

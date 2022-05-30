@@ -37,7 +37,6 @@
     export let markerField = StateField.define<DecorationSet>(markerConfig);
 
     export function highlight(range: {from: number, to: number}) {
-        console.log(range)
         let thisEffectType = markerUpdate
         let eff = thisEffectType.of(range);
         let spec: TransactionSpec = {
