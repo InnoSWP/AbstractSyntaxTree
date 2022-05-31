@@ -38,7 +38,6 @@
     export let markerField = StateField.define<DecorationSet>(markerConfig);
 
     arrayHighlight.subscribe(([[from, to], src]) => {
-        console.log(from, to)
         if(from < 0 || to < 0) {
             return;
         }

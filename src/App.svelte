@@ -4,29 +4,33 @@
   import TreeRepresentation from "./TreeRepresentation.svelte";
   import ArrayRepresentation from "./ArrayRepresentation.svelte";
   import Stores from "./Stores.svelte";
+  import Modal from "./Modal.svelte";
+  import { Modals, closeModal, openModal} from 'svelte-modals';
   import type { Program } from "esprima";
   import type { EditorView } from '@codemirror/view';
-import MarkerPlugin from "./MarkerPlugin.svelte";
+  import MarkerPlugin from "./MarkerPlugin.svelte";
 
   let view: EditorView = null
   let tree: Program
   $: _view = view
 
-  let defaultDoc: string = `function inOrderTraversal(tree) {
-        function aux(n, depth, current) {
-            if(n == null) {
-                return;
-            }
-            let value = extractValue(n);
-            current.push([depth, n.type, value, n.range]);
-            for(let child of extractChildren(n)) {
-                current.concat(aux(child, depth+1, current));
-            }
-            return current;
-        }
+  const params = new URLSearchParams(window.location.search)
 
-        return aux(tree, 0, []);
-    }`
+  let doc: string = `console.log(a+b)`
+  if(params.has('program')) {
+    let decoded: string = window.atob(params.get('program'))
+    doc = decoded
+  }
+
+  function openShare() {
+    let raw: string = view.state.doc.toString()
+    let encoded: string = window.btoa(raw)
+    let url: string = new URL(`?program=${encoded}`, window.location.href).toString()
+    openModal(Modal, {
+      "title": "Share this code with others!",
+      "link": url,
+    })
+  }
 </script>
 
 <script lang="ts" context="module">
@@ -36,11 +40,22 @@ import MarkerPlugin from "./MarkerPlugin.svelte";
 <Tailwind />
 <Stores />
 <MarkerPlugin />
+<Modals>
+  <div slot="backdrop" class="backdrop" on:click={closeModal}/>
+</Modals>
 
 <div class="h-screen flex items-stretch">
-  <CodeMirror classes="h-full w-3/12" bind:view bind:tree doc={defaultDoc} />
+  <div class="h-screen w-4/12 flex code-container">
+      <CodeMirror bind:view bind:tree bind:doc />
+
+      <div class="absolute bottom-0 bg-treebg w-4/12">
+        <button on:click={openShare} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 m-2 rounded">
+          Share
+        </button>
+      </div>
+  </div>
   
-  <div class="h-screen w-5/12 bg-treebg">
+  <div class="h-screen w-4/12 bg-treebg">
     <TreeRepresentation bind:tree />
   </div>
 
@@ -53,5 +68,14 @@ import MarkerPlugin from "./MarkerPlugin.svelte";
 <style lang="postcss">
   :global(html, body) {
     height: 100vh;
+  }
+
+  .code-container {
+    height: calc(100% - 48px);
+  }
+
+  .backdrop {
+    @apply fixed top-0 bottom-0 left-0 right-0 z-40;
+    background-color: rgba(0, 0, 0, 0.5);
   }
 </style>

@@ -13,7 +13,6 @@
     })
 
     export let view: EditorView = null
-    export let classes: string = ""
     export let doc: string = ""
 
     let root
@@ -47,7 +46,7 @@
 
 </script>
 
-<div bind:this={root} class={classes} />
+<div bind:this={root} class="h-full w-full" />
 
 <style lang="postcss">
     :global(.cm-editor) {
