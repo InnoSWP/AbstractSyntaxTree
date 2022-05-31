@@ -3,7 +3,8 @@
     import { arrayHighlight } from "./Stores.svelte";
 
     let hfrom: number, hto: number
-    $: [hfrom, hto] = $arrayHighlight
+    let src: string
+    $: [[hfrom, hto], src] = $arrayHighlight
 
     export let tree: Program = null
     $: PDR = generatePDR(tree)
@@ -56,40 +57,50 @@
         return result
     }
 
+    function handleMouseEnter([from, to]: [number, number]) {
+        arrayHighlight.set([[from, to], "arr"])
+    }
+
+    function handleMouseLeave() {
+        arrayHighlight.set([[0, 0], "arr"])
+    }
 </script>
 
-<table class="min-w-full border text-center font-mono text-s">
-    <thead class="border-b">
-        <tr>
-            <th scope="col" class="text-gray-900 px-1 py-1 border-r w-0">
-                Type
-            </th>
-            <th scope="col" class="text-gray-900 px-1 py-1 border-r w-0">
-                Info
-            </th>
-            <th scope="colgroup" colspan={PDR.length - 2} class="text-sm text-gray-900 px-6 py-4 border-r">
-                Coordinates
-            </th>
-        </tr>
-    </thead>
-    <tbody>
-        {#each PDR as [type, info, [from, to], ...coords]}
-        <tr class={(hfrom <= from && to <= hto ? "highlighted" : "")}>
-            <td class="text-keyword font-light px-0 py-1 border-r border-b w-0">
-                {type}
-            </td>
-            <td class="text-literal font-light px-0 py-1 border-r border-b w-0">
-                {info}
-            </td>
-            {#each coords as c} 
-            <td class="text-gray-900 px-0 py-1 border-r border-b w-0">
-                {c}
-            </td>
+<div class="h-full overflow-scroll">
+    <table class="min-w-full border text-center font-mono text-s">
+        <thead class="border-b">
+            <tr>
+                <th scope="col" class="text-gray-900 px-1 py-1 border-r w-0">
+                    Type
+                </th>
+                <th scope="col" class="text-gray-900 px-1 py-1 border-r w-0">
+                    Info
+                </th>
+                <th scope="colgroup" colspan={PDR.length - 2} class="text-sm text-gray-900 px-6 py-4 border-r">
+                    Coordinates
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            {#each PDR as [type, info, [from, to], ...coords]}
+            <tr class={((hfrom <= from) && (to <= hto) && (src == "tree") ? "highlighted" : "")}>
+                <td class="text-keyword font-light px-0 py-1 border-r border-b w-0 hover:underline cursor-pointer" on:mouseenter={() => handleMouseEnter([from, to])} on:mouseleave={handleMouseLeave}>
+                    {type}
+                </td>
+                <td class="text-literal text-xs font-light px-0 py-1 border-r border-b w-0">
+                    {info}
+                </td>
+                {#each coords as c} 
+                <td class="text-gray-900 px-0 py-1 border-r border-b w-0">
+                    {c}
+                </td>
+                {/each}
+            </tr>
             {/each}
-        </tr>
-        {/each}
-    </tbody>
-</table>
+        </tbody>
+    </table>
+</div>
+
 
 <style lang="postcss">
     .highlighted {
@@ -106,7 +117,7 @@
             case 'Identifier':
                 return n.name; // identifier's name
             case 'Literal':
-                return n.value.toString(); // literal's value
+                return n.value != null ? n.value.toString() : "null"; // literal's value
             case 'ExpressionStatement':
                 return extractValue(n.expression);
             case 'BlockStatement':
@@ -146,6 +157,10 @@
             case 'CallExpression':
             case 'NewExpression':
                 return extractValue(n.callee);
+            case 'ArrayExpression':
+                return `[${extractValue(n.elements[0])}...]`
+            case 'MemberExpression':
+                return `${extractValue(n.object)}.${extractValue(n.property)}`
             case 'ThrowStatement':
             case 'ReturnStatement':
             case 'Program':
@@ -153,10 +168,8 @@
             case 'ForStatement':
             case 'VariableDeclaration':
             case 'ThisExpression':
-            case 'ArrayExpression':
             case 'ObjectExpression':
             case 'FunctionExpression':
-            case 'MemberExpression':
             case 'ConditionalExpression':
             case 'SequenceExpression':
             default:
@@ -197,10 +210,11 @@
                 return [n.test, n.body];
             case 'ForStatement':
                 return [n.init, n.test, n.update, n.body];
+            case 'ForOfStatement':
             case 'ForInStatement':
                 return [n.left, n.right, n.body];
             case 'FunctionDeclaration':
-                return [n.id];
+                return [n.id, ...n.params, n.body];
             case 'VariableDeclaration':
                 return n.declarations;
             case 'VariableDeclarator':

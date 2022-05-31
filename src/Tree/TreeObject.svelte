@@ -2,12 +2,16 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
-    import { highlight, deselectAll} from '../MarkerPlugin.svelte';
     import type { Node } from 'estree';
     import { arrayHighlight } from "../Stores.svelte";
 
     export let obj: Node
     export let expanded = true
+    let hfrom: number, hto: number, hsrc: string
+    $: [[hfrom, hto], hsrc] = $arrayHighlight
+
+    let from: number, to: number, src: string
+    $: [from, to] = obj.range
 
     function toggle() {
         expanded = !expanded
@@ -26,17 +30,15 @@
     }
 
     function handleMouseEnter() {
-        arrayHighlight.set(obj.range)
-        highlight({from: obj.range[0], to: obj.range[1]})
+        arrayHighlight.set([obj.range, "tree"])
     }
 
     function handleMouseLeave() {
-        arrayHighlight.set([0, 0])
-        deselectAll()
+        arrayHighlight.set([[0, 0], "tree"])
     }
 </script>
 
-<li class="entry togglable {expanded ? "open" : ""}">
+<li class="entry togglable {expanded ? "open" : ""} {(hfrom <= from) && (to <= hto) && (hsrc == "arr") ? "highlighted" : ""}">
     <span class="value" on:click={toggle} on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
         <span class="tokenName nc">
             {obj.type}

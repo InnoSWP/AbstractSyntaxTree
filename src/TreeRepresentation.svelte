@@ -13,6 +13,10 @@
 </div>
 
 <style lang="postcss">
+    :global(.highlighted) {
+        @apply bg-amber-300;
+    }
+
     .tree-representation {
         @apply flex flex-col m-0 pl-5 bg-treebg;
     }

@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
     import { TransactionSpec, StateEffect, StateField, RangeSet, EditorState, Transaction, RangeSetBuilder } from '@codemirror/state';
     import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, EditorView } from '@codemirror/view';
+    import { arrayHighlight } from './Stores.svelte';
     import { _view } from './App.svelte'
 
     export {}
@@ -36,23 +37,18 @@
 
     export let markerField = StateField.define<DecorationSet>(markerConfig);
 
-    export function highlight(range: {from: number, to: number}) {
+    arrayHighlight.subscribe(([[from, to], src]) => {
+        console.log(from, to)
+        if(from < 0 || to < 0) {
+            return;
+        }
         let thisEffectType = markerUpdate
-        let eff = thisEffectType.of(range);
+        let eff = thisEffectType.of({from:from, to:to});
         let spec: TransactionSpec = {
         effects: [eff],
         }
         _view.dispatch(spec)
-    }
-
-    export function deselectAll() {
-        let thisEffectType = markerUpdate
-        let eff = thisEffectType.of({from: -1, to: -1});
-        let spec: TransactionSpec = {
-        effects: [eff],
-        }
-        _view.dispatch(spec)
-    }
+    })
 
     export const markerPlugin = ViewPlugin.fromClass(class {
         decorations: DecorationSet

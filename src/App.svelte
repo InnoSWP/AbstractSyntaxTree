@@ -6,20 +6,36 @@
   import Stores from "./Stores.svelte";
   import type { Program } from "esprima";
   import type { EditorView } from '@codemirror/view';
+import MarkerPlugin from "./MarkerPlugin.svelte";
 
-  let view: EditorView
+  let view: EditorView = null
   let tree: Program
   $: _view = view
 
-  let defaultDoc: string = 'const a = 1;\nlet f = (x) => {\n   return 0 + a;\n}\nf(2)'
+  let defaultDoc: string = `function inOrderTraversal(tree) {
+        function aux(n, depth, current) {
+            if(n == null) {
+                return;
+            }
+            let value = extractValue(n);
+            current.push([depth, n.type, value, n.range]);
+            for(let child of extractChildren(n)) {
+                current.concat(aux(child, depth+1, current));
+            }
+            return current;
+        }
+
+        return aux(tree, 0, []);
+    }`
 </script>
 
 <script lang="ts" context="module">
-  export let _view: EditorView 
+  export let _view: EditorView = null
 </script>
 
 <Tailwind />
 <Stores />
+<MarkerPlugin />
 
 <div class="h-screen flex items-stretch">
   <CodeMirror classes="h-full w-3/12" bind:view bind:tree doc={defaultDoc} />

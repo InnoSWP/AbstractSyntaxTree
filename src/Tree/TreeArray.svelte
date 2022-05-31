@@ -1,7 +1,6 @@
 <script lang="ts">
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
-    import { highlight, deselectAll } from '../MarkerPlugin.svelte'
     import { arrayHighlight } from "../Stores.svelte";
 
     export let expanded: boolean = true
@@ -50,13 +49,11 @@
 
     function handleMouseEnter() {
         let range = calculateRange()
-        highlight(range)
-        arrayHighlight.set([range.from, range.to])
+        arrayHighlight.set([[range.from, range.to], "tree"])
     }
 
     function handleMouseLeave() {
-        deselectAll()
-        arrayHighlight.set([0, 0])
+        arrayHighlight.set([[0, 0], "tree"])
     }
 </script>
 

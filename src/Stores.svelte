@@ -1,6 +1,7 @@
 <script lang="ts" context="module">
     import { writable } from "svelte/store";
 
-    export const arrayHighlight = writable([0, 0] as [number, number]);
+    type highlightInfo = [[number, number], "arr"|"tree"]
+    export const arrayHighlight = writable([[-1, -1], "tree"] as highlightInfo);
     arrayHighlight.subscribe(()=>{})
 </script>
