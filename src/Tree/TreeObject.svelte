@@ -7,11 +7,18 @@
 
     export let obj: Node
     export let expanded = true
+    export let key: string = ""
     let hfrom: number, hto: number, hsrc: string
     $: [[hfrom, hto], hsrc] = $arrayHighlight
 
     let from: number, to: number, src: string
-    $: [from, to] = obj.range
+    $: {
+        if(obj.range != undefined) {
+            [from, to] = obj.range
+        } else {
+            [from, to] = [0, 0]
+        }
+    }
 
     function toggle() {
         expanded = !expanded
@@ -30,7 +37,7 @@
     }
 
     function handleMouseEnter() {
-        arrayHighlight.set([obj.range, "tree"])
+        arrayHighlight.set([[from, to], "tree"])
     }
 
     function handleMouseLeave() {
@@ -41,7 +48,7 @@
 <li class="entry togglable {expanded ? "open" : ""} {(hfrom <= from) && (to <= hto) && (hsrc == "arr") ? "highlighted" : ""}">
     <span class="value" on:click={toggle} on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
         <span class="tokenName nc">
-            {obj.type}
+            {obj.type != undefined ? obj.type : key}
         </span>
     </span>
     <span class="prefix p">{' {'}</span>
@@ -53,7 +60,7 @@
                 {:else if Array.isArray(v) && k != 'range'}
                     <TreeArray key={k} value={v}/>
                 {:else if k != 'range'}
-                    <svelte:self obj={v} />
+                    <svelte:self obj={v} key={k} />
                 {/if}
             {/each}
         </ul>

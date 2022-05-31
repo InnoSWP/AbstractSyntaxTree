@@ -5,7 +5,6 @@
 
     export let expanded: boolean = true
     export let key: string = "", value = []
-    $: if(key == 'range') expanded = false;
 
     function calculateRange(): {from: number, to: number} {
         let from, to
@@ -43,12 +42,12 @@
         return true;
     }
 
-    function isObject(val): boolean {
-        return typeof val == "object";
-    }
-
     function handleMouseEnter() {
         let range = calculateRange()
+        if(range.from == undefined) {
+            range.from = 0
+            range.to = 0
+        }
         arrayHighlight.set([[range.from, range.to], "tree"])
     }
 
