@@ -1,7 +1,20 @@
 <script lang="ts" context="module">
+import { highlightingFor } from "@codemirror/language";
+
     import { writable } from "svelte/store";
 
     type highlightInfo = [[number, number], "arr"|"tree"]
     export const arrayHighlight = writable([[-1, -1], "tree"] as highlightInfo);
     arrayHighlight.subscribe(()=>{})
+
+    type option = {
+        title: string,
+        callback: () => void,
+    }
+    type contextMenuInfo = [
+         option[],
+        {x:number,y:number}
+    ]
+    export const contextMenu = writable([[],{x:0,y:0}] as contextMenuInfo);
+    contextMenu.subscribe(()=>{})
 </script>
