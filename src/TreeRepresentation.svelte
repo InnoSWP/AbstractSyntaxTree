@@ -1,15 +1,13 @@
 <script lang="ts">
     import TreeObject from "./Tree/TreeObject.svelte";
     import type { Program } from "esprima";
-    import type { EditorView } from "@codemirror/basic-setup";
     export let tree: Program = null;
-    export let view: EditorView=null;
 </script>
 
 <div class="tree-representation overflow-scroll h-full">
     <ul>
         {#if tree != null}
-            <TreeObject bind:view obj={tree}/>
+            <TreeObject obj={tree}/>
         {/if}
     </ul>
 </div>

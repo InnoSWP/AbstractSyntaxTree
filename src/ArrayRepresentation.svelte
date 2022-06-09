@@ -177,7 +177,7 @@
         }
     }
 
-    function extractChildren(n: Node): (Node | null)[] {
+    export function extractChildren(n: Node): (Node | null)[] {
         switch(n.type) {
             case 'BlockStatement':
             case 'Program':

@@ -1,14 +1,11 @@
 <script>
-    import { onMount, getContext } from 'svelte';
-    import { key } from './menu.js';
-
     export let isDisabled = false;
     export let text = '';
 
+    export let dispatchClick:()=>void;
+
     import { createEventDispatcher } from 'svelte';
     const dispatch = createEventDispatcher();
-
-    const { dispatchClick } = getContext(key);
 
     const handleClick = e => {
         if (isDisabled) return;
@@ -18,23 +15,19 @@
     }
 </script>
 
-<style>
+<style lang="postcss">
     div {
+        @apply cursor-default items-center flex;
         padding: 4px 15px;
-        cursor: default;
         font-size: 14px;
-        display: flex;
-        align-items: center;
         grid-gap: 5px;
     }
     div:hover {
         background: #0002;
     }
     div.disabled {
+        @apply hover:bg-white;
         color: #0006;
-    }
-    div.disabled:hover {
-        background: white;
     }
 </style>
 

@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
 import { highlightingFor } from "@codemirror/language";
+    import type { Node } from 'estree';
 
     import { writable } from "svelte/store";
 
@@ -17,4 +18,9 @@ import { highlightingFor } from "@codemirror/language";
     ]
     export const contextMenu = writable([[],{x:0,y:0}] as contextMenuInfo);
     contextMenu.subscribe(()=>{})
+
+
+    export const constantFolding = writable(null as Node);
+    constantFolding.subscribe(()=>{})
+
 </script>

@@ -11,6 +11,7 @@
   import MarkerPlugin from "./MarkerPlugin.svelte";
   import Menu from "./CustomContextMenu/Menu.svelte";
   import {contextMenu} from "./Stores.svelte";
+import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
 
   let view: EditorView = null
   let tree: Program
@@ -39,8 +40,8 @@
   }
 
 
-  let options: {title:string,callback: () => void}[]=[{title:"",callback:()=>{}}], pos:{x:number,y:number} ={x:0,y:0}
-  $: [options, pos] = $contextMenu
+  let contextMenuOptions: {title:string,callback: () => void}[], contextMenuPosition:{x:number,y:number}
+  $: [contextMenuOptions, contextMenuPosition] = $contextMenu
 </script>
 
 <script lang="ts" context="module">
@@ -53,6 +54,7 @@
 <Tailwind />
 <Stores />
 <MarkerPlugin />
+<ConstantFolderPlugin />
 <Modals>
   <div slot="backdrop" class="backdrop" on:click={closeModal}/>
 </Modals>
@@ -69,7 +71,7 @@
   </div>
   
   <div class="h-screen w-4/12 bg-treebg">
-     <TreeRepresentation bind:view bind:tree />
+     <TreeRepresentation bind:tree />
   </div>
 
   <div class="h-screen w-4/12">
@@ -77,8 +79,8 @@
   </div>
 
 
-  {#if options.length > 0}
-    <Menu {...pos} options = {options}  on:click={closeContextMenu} on:clickoutside={closeContextMenu}/>
+  {#if contextMenuOptions.length > 0}
+    <Menu {...contextMenuPosition} options={contextMenuOptions}  on:click={closeContextMenu} on:clickoutside={closeContextMenu}/>
   {/if}
 
 </div>

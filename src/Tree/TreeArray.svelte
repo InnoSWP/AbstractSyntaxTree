@@ -2,12 +2,10 @@
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
     import { arrayHighlight , contextMenu} from "../Stores.svelte";
-import type { EditorState, EditorView } from "@codemirror/basic-setup";
 
     export let expanded: boolean = true
     export let key: string = "", value = []
 
-    export let view: EditorView = null;
 
     function calculateRange(): {from: number, to: number} {
         let from, to
@@ -85,7 +83,7 @@ import type { EditorState, EditorView } from "@codemirror/basic-setup";
                         </span>
                     </li>
                 {:else}
-                    <TreeObject bind:view obj={e} expanded={false}/>
+                    <TreeObject obj={e} expanded={false}/>
                 {/if}
             {/each}
         </ul>

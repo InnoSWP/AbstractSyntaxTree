@@ -1,7 +1,6 @@
 <script>
-    import { onMount, setContext, createEventDispatcher } from 'svelte';
+    import { createEventDispatcher } from 'svelte';
     import { fade } from 'svelte/transition';
-    import { key } from './menu.js';
     import MenuOption from "./MenuOption.svelte";
 
     export let x:number;
@@ -18,9 +17,8 @@
 
     const dispatch = createEventDispatcher();
 
-    setContext(key, {
-        dispatchClick: () => dispatch('click')
-    });
+    const dispatchClick = () => dispatch('click');
+
 
     let menuEl;
     function onPageClick(e) {
@@ -29,20 +27,19 @@
     }
 </script>
 
-<style>
+<style lang="postcss">    
     div {
-        position: absolute;
-        display: grid;
+        @apply grid absolute bg-white;
         border: 1px solid #0003;
         box-shadow: 2px 2px 5px 0px #0002;
-        background: white;
     }
 </style>
 
 <svelte:body on:click={onPageClick} />
-<div transition:fade={{ duration: 100 }} bind:this={menuEl} style=" position: fixed;top: {y}px; left: {x}px;">
+<div class = "menu" transition:fade={{ duration: 100 }} bind:this={menuEl} style=" position: fixed;top: {y}px; left: {x}px;">
     {#each options as option}
         <MenuOption
+                dispatchClick = {dispatchClick}
                 on:click={option.callback}
                 text={option.title} />
     {/each}
