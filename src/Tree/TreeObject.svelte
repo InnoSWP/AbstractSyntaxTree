@@ -55,11 +55,11 @@
     {#if expanded}
         <ul class="value-body" transition:slide|local>
             {#each Object.entries(obj) as [k, v]}
-                {#if isPrimitive(v)}
+                {#if isPrimitive(v) && k != 'type' && k != 'sourceType'}
                     <TreePrimitive key={k} value={v}/>
                 {:else if Array.isArray(v) && k != 'range'}
                     <TreeArray key={k} value={v}/>
-                {:else if k != 'range'}
+                {:else if k != 'range' && k != 'type' && k != 'sourceType'}
                     <svelte:self obj={v} key={k} />
                 {/if}
             {/each}
