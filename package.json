@@ -20,6 +20,7 @@
     "@tsconfig/svelte": "^1.0.0",
     "@types/esprima": "^4.0.3",
     "autoprefixer": "^10.2.3",
+    "node-sass": "^7.0.1",
     "postcss": "^8.2.4",
     "rollup": "^2.3.4",
     "rollup-plugin-css-only": "^3.1.0",
