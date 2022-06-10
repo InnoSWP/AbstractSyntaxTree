@@ -1,10 +1,11 @@
 <script lang="ts">
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
-    import { arrayHighlight } from "../Stores.svelte";
+    import { arrayHighlight , contextMenu} from "../Stores.svelte";
 
     export let expanded: boolean = true
     export let key: string = "", value = []
+
 
     function calculateRange(): {from: number, to: number} {
         let from, to
@@ -54,10 +55,16 @@
     function handleMouseLeave() {
         arrayHighlight.set([[0, 0], "tree"])
     }
+
+    function rightClick(e){
+        let pos = { x: e.clientX, y: e.clientY };
+        let options = [{title:"TreeArray sample option",callback:()=>console.log("tree array option clicked")}]
+        contextMenu.set([options,pos])
+    }
 </script>
 
 <li class="entry togglable {expanded ? "open" : ""}">
-    <span class="key" on:click={toggle} on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}>
+    <span class="key" on:click={toggle} on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}  on:contextmenu|preventDefault={rightClick}>
         <span class="name nb">
             {key}
         </span>

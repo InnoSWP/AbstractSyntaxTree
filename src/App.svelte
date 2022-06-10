@@ -9,6 +9,9 @@
   import type { Program } from "esprima";
   import type { EditorView } from '@codemirror/view';
   import MarkerPlugin from "./MarkerPlugin.svelte";
+  import Menu from "./CustomContextMenu/Menu.svelte";
+  import {contextMenu} from "./Stores.svelte";
+import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
 
   let view: EditorView = null
   let tree: Program
@@ -31,15 +34,27 @@
       "link": url,
     })
   }
+
+  function closeContextMenu() {
+    contextMenu.set([[],{x:0,y:0}])
+  }
+
+
+  let contextMenuOptions: {title:string,callback: () => void}[], contextMenuPosition:{x:number,y:number}
+  $: [contextMenuOptions, contextMenuPosition] = $contextMenu
 </script>
 
 <script lang="ts" context="module">
+
   export let _view: EditorView = null
+
+
 </script>
 
 <Tailwind />
 <Stores />
 <MarkerPlugin />
+<ConstantFolderPlugin />
 <Modals>
   <div slot="backdrop" class="backdrop" on:click={closeModal}/>
 </Modals>
@@ -56,12 +71,17 @@
   </div>
   
   <div class="h-screen w-4/12 bg-treebg">
-    <TreeRepresentation bind:tree />
+     <TreeRepresentation bind:tree />
   </div>
 
   <div class="h-screen w-4/12">
-    <ArrayRepresentation bind:tree />
+     <ArrayRepresentation bind:tree />
   </div>
+
+
+  {#if contextMenuOptions.length > 0}
+    <Menu {...contextMenuPosition} options={contextMenuOptions}  on:click={closeContextMenu} on:clickoutside={closeContextMenu}/>
+  {/if}
 
 </div>
 
