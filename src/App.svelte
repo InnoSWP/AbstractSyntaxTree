@@ -11,6 +11,7 @@
   import MarkerPlugin from "./MarkerPlugin.svelte";
   import Menu from "./CustomContextMenu/Menu.svelte";
   import {contextMenu} from "./Stores.svelte";
+  import { compress, decompress } from 'lzw-compressor';
 import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
 
   let view: EditorView = null
@@ -21,14 +22,15 @@ import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
 
   let doc: string = `console.log(a+b)`
   if(params.has('program')) {
-    let decoded: string = window.atob(params.get('program'))
+    let decoded: string = decompress(params.get('program'));
     doc = decoded
   }
 
   function openShare() {
-    let raw: string = view.state.doc.toString()
-    let encoded: string = window.btoa(raw)
-    let url: string = new URL(`?program=${encoded}`, window.location.href).toString()
+    let raw: string = view.state.doc.toString();
+    let encoded: string = encodeURIComponent(compress(raw));
+    console.log(encoded);
+    let url: string = new URL(`?program=${encoded}`, window.location.href).toString();
     openModal(Modal, {
       "title": "Share this code with others!",
       "link": url,

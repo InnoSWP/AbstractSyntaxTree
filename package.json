@@ -40,6 +40,7 @@
     "@codemirror/theme-one-dark": "^0.20.0",
     "@lezer/javascript": "^0.16.0",
     "esprima": "^4.0.1",
+    "lzw-compressor": "^21.6.5",
     "sirv-cli": "^1.0.0",
     "svelte-modals": "^1.1.0"
   }
