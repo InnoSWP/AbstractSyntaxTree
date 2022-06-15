@@ -16,7 +16,12 @@
             if(n == null) {
                 return;
             }
-            let value = extractValue(n);
+            let value;
+            if (n.type != 'CallExpression' && n.type != 'MemberExpression') {
+                value = extractValue(n);
+            } else {
+                value = '';
+            }
             current.push([depth, n.type, value, n.range]);
             for(let child of extractChildren(n)) {
                 current.concat(aux(child, depth+1, current));
@@ -144,6 +149,9 @@
             case 'ForInStatement':
                 return extractValue(n.right);
             case 'FunctionDeclaration':
+                let result = "";
+                n.params.forEach((par) => {result += par.name.toString() + ', '});
+                return `${extractValue(n.id)}(${result.substring(0, result.length - 2)})`;
             case 'VariableDeclarator':
                 return extractValue(n.id);
             case 'Property':
