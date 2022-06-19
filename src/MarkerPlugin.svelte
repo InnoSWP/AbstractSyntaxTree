@@ -14,7 +14,7 @@
         },
         update: function(value: DecorationSet, transaction: Transaction) {
             let dec = Decoration.mark({
-                class: "highlighted"
+                class: "highlightedRoot"
             })
             if(transaction.effects.length == 0) {
                 return value;
