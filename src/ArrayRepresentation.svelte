@@ -67,8 +67,6 @@ import { get } from "svelte/store";
     function handleMouseEnter(index: number, [from, to]: [number, number]) {
         arrayHighlight.set([[from, to], "arr"])
         highlightFromRoot(index)
-        console.log($highlightStates)
-        console.log($nodeIndex)
     }
 
     function handleMouseLeave() {
@@ -77,7 +75,7 @@ import { get } from "svelte/store";
     }
 
     function isChild(ind1: number, ind2: number): boolean {
-        if (ind1 == ind2)
+        if (ind1 == ind2 || ind1 >= PDR.length || ind2 >= PDR.length)
             return false
         for (let i = 4; i < PDR[ind1].length && PDR[ind1][i] > 0; i++) {
             if (PDR[ind1][i] != PDR[ind2][i])
@@ -88,18 +86,35 @@ import { get } from "svelte/store";
     
     function highlightFromRoot(index: number) {
         $highlightStates[index] = "highlightedRoot"
+        let minfrom = PDR[index][3][0], maxto = PDR[index][3][1]
         for (let i = 0; i < $highlightStates.length; i++) {
-            if (isChild(index, i))
+            if (isChild(index, i)) {
                 $highlightStates[i] = "highlighted"
+                minfrom = Math.min(minfrom, PDR[i][3][0])
+                maxto = Math.max(maxto, PDR[i][3][1])
+            }
         }
+        arrayHighlight.set([[minfrom, maxto], "code"])
     }
 
     function clearHighlight() {
         for (let i = 0; i < get(highlightStates).length; i++)
             $highlightStates[i] = ""
     }
-
+ 
     beforeUpdate(()=>{
+        if (src == "code") {
+            clearHighlight()
+
+            if (hto - hfrom > 0)
+                for (let i = PDR.length - 1; i > -1; i--) {
+                    if (PDR[i][3][0] <= hfrom && hto <= PDR[i][3][1]) {
+                        $highlightStates[i] = "highlightedRoot"
+                        break
+                    }
+                }
+        }
+
         let index = $highlightStates.findIndex(e => e == "highlightedRoot")
         if (index > -1) {
             highlightFromRoot(index)
