@@ -2,7 +2,7 @@
     import type { Program, Node } from "estree";
 import { afterUpdate, beforeUpdate } from "svelte";
 import { get } from "svelte/store";
-    import { arrayHighlight, nodeIndex, highlightStates, updater } from "./Stores.svelte";
+    import { arrayHighlight, nodeIndex, highlightStates } from "./Stores.svelte";
 
     let hfrom: number, hto: number
     let src: string
