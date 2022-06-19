@@ -6,6 +6,7 @@
     import { javascript } from '@codemirror/lang-javascript'
     import { parseScript, parseModule, Program } from 'esprima'
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
+import { arrayHighlight } from './Stores.svelte';
 
     onMount(() => {
         createEditor()
@@ -14,6 +15,7 @@
 
     export let view: EditorView = null
     export let doc: string = ""
+    $: [[hfrom, hto], src] = $arrayHighlight
 
     let root
     export let tree: Program = null
@@ -23,6 +25,9 @@
             try {
                 tree = parseModule(view.state.doc.toString(), { range: true })
             } catch {}
+        }
+        if (v.selectionSet) {
+            arrayHighlight.set([[v.state.selection.main.from, v.state.selection.main.to], "code"])
         }
     }
     
@@ -43,6 +48,8 @@
             parent: root,
         })
     }
+
+
 
 </script>
 

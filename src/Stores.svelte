@@ -4,7 +4,7 @@ import { highlightingFor } from "@codemirror/language";
 
     import { writable } from "svelte/store";
 
-    type highlightInfo = [[number, number], "arr"|"tree"]
+    type highlightInfo = [[number, number], "arr"|"tree"|"code"]
     export const arrayHighlight = writable([[-1, -1], "tree"] as highlightInfo);
     arrayHighlight.subscribe(()=>{})
 
