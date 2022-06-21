@@ -147,11 +147,6 @@
                 let result = [];
                 n.params.forEach((par) => {
                     result.push(extractValuesFromPattern(par));
-                    // if (par.type == "Identifier") {
-                    //     result += par.name.toString() + ', ';
-                    // } else if (par.type == "ObjectPattern") {
-                    //     result += extractValuesFromPattern(par.properties[0]);
-                    // }
                 });
                 let ans = "";
                 result.forEach((e) => {
