@@ -1,5 +1,8 @@
 <script lang="ts">
-    import type { Program, Node } from "estree";
+    import type {Program} from 'esprima';
+    import type {Node} from './Estree/estreeExtension'
+    import { extractChildren } from './Estree/estreeUtils';
+    
     import { arrayHighlight } from "./Stores.svelte";
 
     let hfrom: number, hto: number
@@ -152,6 +155,7 @@
             case 'UpdateExpression':
             case 'BinaryExpression':
             case 'AssignmentExpression':
+            case 'CompressedBinaryExpression':
             case 'LogicalExpression':
                 return n.operator;
             case 'CallExpression':
@@ -177,76 +181,5 @@
         }
     }
 
-    export function extractChildren(n: Node): (Node | null)[] {
-        switch(n.type) {
-            case 'BlockStatement':
-            case 'Program':
-                return n.body;
-            case 'ExpressionStatement':
-                return [n.expression];
-            case 'WithStatement':
-                return [n.object, n.body];
-            case 'ThrowStatement':
-            case 'ReturnStatement':
-                return [n.argument];
-            case 'LabeledStatement':
-                return [n.label, n.body];
-            case 'BreakStatement':
-                return [];
-            case 'ContinueStatement':
-                return [n.label];
-            case 'IfStatement':
-                return [n.test, n.consequent, n.alternate]
-            case 'SwitchStatement':
-                return [n.discriminant, ...n.cases];
-            case 'SwitchCase':
-                return [n.test, ...n.consequent];
-            case 'TryStatement':
-                return [n.block, n.handler, n.finalizer];
-            case 'CatchClause':
-                return [n.param, n.body];
-            case 'WhileStatement':
-            case  'DoWhileStatement':
-                return [n.test, n.body];
-            case 'ForStatement':
-                return [n.init, n.test, n.update, n.body];
-            case 'ForOfStatement':
-            case 'ForInStatement':
-                return [n.left, n.right, n.body];
-            case 'FunctionDeclaration':
-                return [n.id, ...n.params, n.body];
-            case 'VariableDeclaration':
-                return n.declarations;
-            case 'VariableDeclarator':
-                return [n.id, n.init];
-            case 'ArrayExpression':
-                return n.elements;
-            case 'ObjectExpression':
-                return n.properties;
-            case 'Property':
-                return [n.key, n.value];
-            case 'FunctionExpression':
-                return [n.id, ...n.params, n.body];
-            case 'ArrowFunctionExpression':
-                return [...n.params, n.body];
-            case 'UnaryExpression':
-            case 'UpdateExpression':
-                return [n.argument];
-            case 'BinaryExpression':
-            case 'AssignmentExpression':
-            case 'LogicalExpression':
-                return [n.left, n.right];
-            case 'MemberExpression':
-                return [n.object, n.property];
-            case 'ConditionalExpression':
-                return [n.test, n.consequent, n.alternate];
-            case 'CallExpression':
-            case 'NewExpression':
-                return [n.callee, ...n.arguments];
-            case 'SequenceExpression':
-                return n.expressions;
-        }
-
-        return [];
-    }
+    
 </script>

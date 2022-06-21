@@ -1,9 +1,9 @@
 <script lang="ts" context="module">
     import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, EditorView, } from '@codemirror/view';
     import { arrayHighlight, constantFolding } from './Stores.svelte';
-    import type { Node } from 'estree';
+    import type {  Node } from "./Estree/estreeExtension";
+    import {extractChildren} from "./Estree/estreeUtils"
     import { _view } from './App.svelte'
-    import { extractChildren } from './ArrayRepresentation.svelte';
 
     type transactionDescription = {from:number,to:number,replaceWith:string}
     type foldResponse = {hasFoldedCompletely:boolean, descriptions:transactionDescription[]}
@@ -29,6 +29,13 @@
                 descriptions[1].replaceWith
             let evaluatatedExpression = JSON.stringify(eval(expressionToEvaluate))
             return {hasFoldedCompletely:true, descriptions:[{from:node.left.range[0],to:node.right.range[1],replaceWith:evaluatatedExpression}]}
+        }else if (allChilrenFolded && node.type == "CompressedBinaryExpression"){
+            let expressionToEvaluate = descriptions.map(description =>description.replaceWith).join(node.operator)
+            let evaluatatedExpression = JSON.stringify(eval(expressionToEvaluate))
+            
+            let firstOperand = node.operands[0],lastOperand = node.operands[node.operands.length-1];
+
+            return {hasFoldedCompletely:true, descriptions:[{from:firstOperand.range[0],to:lastOperand.range[1],replaceWith:evaluatatedExpression}]}
         }
 
         return {hasFoldedCompletely:false, descriptions}

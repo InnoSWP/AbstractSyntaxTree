@@ -5,27 +5,30 @@
     import { indentWithTab } from '@codemirror/commands'
     import { javascript } from '@codemirror/lang-javascript'
     import { parseScript, parseModule, Program } from 'esprima'
+    import type {  CompressedBinaryExpression, Node } from "./Estree/estreeExtension";
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
+    import estraverse from 'estraverse'
+    import { compressBinaryExpression, compressBinaryExpressionsInTree } from './Estree/BinaryExpressionComressor';
 
     onMount(() => {
         createEditor()
         tree = parseModule(view.state.doc.toString(), { range: true })
     })
-
     export let view: EditorView = null
     export let doc: string = ""
 
     let root
-    export let tree: Program = null
+    export let tree: Node = null
 
     function updateHandle(v: ViewUpdate): void {
         if(v.docChanged) {
             try {
                 tree = parseModule(view.state.doc.toString(), { range: true })
-            } catch {}
+                tree = compressBinaryExpressionsInTree(tree)
+            } catch(e) {
+            }
         }
     }
-    
 
     function createEditor(): void {
         view = new EditorView({
