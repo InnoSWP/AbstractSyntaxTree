@@ -2,7 +2,7 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
-    import type {  Node } from "../Estree/estreeExtension";
+    import type {  Node } from "../Estree/estreeExtension.svelte";
     import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex } from "../Stores.svelte";
     import CodeMirror from "../CodeMirror.svelte";
     import { get } from "svelte/store";

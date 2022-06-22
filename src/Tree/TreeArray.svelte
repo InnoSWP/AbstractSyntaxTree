@@ -2,7 +2,7 @@
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
     import { arrayHighlight , contextMenu, highlightStates, nodeIndex} from "../Stores.svelte";
-    import type { Node } from '../Estree/estreeExtension';
+    import type { Node } from '../Estree/estreeExtension.svelte';
     import { get } from "svelte/store";
 
     export let expanded: boolean = true

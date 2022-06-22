@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
     import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, EditorView, } from '@codemirror/view';
     import { arrayHighlight, constantFolding } from './Stores.svelte';
-    import type {  Node } from "./Estree/estreeExtension";
+    import type {  Node } from "./Estree/estreeExtension.svelte";
     import {extractChildren} from "./Estree/estreeUtils"
     import { _view } from './App.svelte'
 
