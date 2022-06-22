@@ -5,6 +5,7 @@
 
     import { afterUpdate, beforeUpdate } from "svelte";
     import { get } from "svelte/store";
+    import type {Pattern} from 'estree'
     import { arrayHighlight, nodeIndex, highlightStates } from "./Stores.svelte";
 
     let hfrom: number, hto: number
@@ -236,7 +237,7 @@
     }
 
 
-    function extractValuesFromPattern(pattern: BasePattern) {
+    function extractValuesFromPattern(pattern: Pattern) {
         if (pattern.type == "Identifier") {
             return [pattern.name];
         } else {

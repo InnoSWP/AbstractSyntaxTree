@@ -3,7 +3,7 @@
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
     import type {  Node } from "../Estree/estreeExtension";
-    import {contextMenu, arrayHighlight, constantFolding } from "../Stores.svelte";
+    import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex } from "../Stores.svelte";
     import CodeMirror from "../CodeMirror.svelte";
     import { get } from "svelte/store";
 

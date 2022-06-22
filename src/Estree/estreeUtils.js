@@ -16,6 +16,8 @@ export function setChildren(n,newChildren ) {
             return;
         case 'ThrowStatement':
         case 'ReturnStatement':
+        case 'UnaryExpression':
+        case 'UpdateExpression':
             [n.argument]=newChildren;
             return;
         case 'LabeledStatement':
@@ -26,6 +28,7 @@ export function setChildren(n,newChildren ) {
         case 'ContinueStatement':
             [n.label]=newChildren;
             return;
+        case 'ConditionalExpression':
         case 'IfStatement':
             [n.test, n.consequent, n.alternate]=newChildren;
             return;
@@ -52,8 +55,9 @@ export function setChildren(n,newChildren ) {
         case 'ForInStatement':
             [n.left, n.right, n.body]=newChildren;
             return;
+        case 'FunctionExpression':
         case 'FunctionDeclaration':
-            n.body = newChildren.splice(newChildren.length-1,1);
+            n.body  = extractLastChild(newChildren);
             [n.id, ...n.params]=newChildren;
             return;
         case 'VariableDeclaration':
@@ -71,17 +75,9 @@ export function setChildren(n,newChildren ) {
         case 'Property':
             [n.key, n.value]=newChildren;
             return;
-        case 'FunctionExpression':
-            n.body = newChildren.splice(newChildren.length-1,1);
-            [n.id, ...n.params] = newChildren;
-            return;
         case 'ArrowFunctionExpression':
-            n.body = newChildren.splice(newChildren.length-1,1);
+            n.body = extractLastChild(newChildren);
             [...n.params]=newChildren;
-            return;
-        case 'UnaryExpression':
-        case 'UpdateExpression':
-            [n.argument]=newChildren;
             return;
         case 'BinaryExpression':
         case 'AssignmentExpression':
@@ -90,9 +86,6 @@ export function setChildren(n,newChildren ) {
             return;
         case 'MemberExpression':
             [n.object, n.property]=newChildren;
-            return;
-        case 'ConditionalExpression':
-            [n.test, n.consequent, n.alternate]=newChildren;
             return;
         case 'CallExpression':
         case 'NewExpression':
@@ -105,8 +98,10 @@ export function setChildren(n,newChildren ) {
             n.operands=newChildren;
             return;
     }
+}
 
-    return;
+function extractLastChild(arr){
+    return arr.splice(arr.length-1,1);
 }
 
 export function extractChildren(n) {
