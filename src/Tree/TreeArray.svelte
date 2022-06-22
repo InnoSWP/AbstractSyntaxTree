@@ -1,10 +1,13 @@
 <script lang="ts">
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
-    import { arrayHighlight , contextMenu} from "../Stores.svelte";
+    import { arrayHighlight , contextMenu, highlightStates, nodeIndex} from "../Stores.svelte";
+    import type { Node } from '../Estree/estreeExtension.svelte';
+    import { get } from "svelte/store";
 
     export let expanded: boolean = true
     export let key: string = "", value = []
+    export let parent: Node
 
 
     function calculateRange(): {from: number, to: number} {
@@ -49,11 +52,18 @@
             range.from = 0
             range.to = 0
         }
+        $highlightStates[$nodeIndex.get(parent)] = "highlightedRoot"
         arrayHighlight.set([[range.from, range.to], "tree"])
+    }
+
+    function clearHighlight() {
+        for (let i = 0; i < get(highlightStates).length; i++)
+            $highlightStates[i] = ""
     }
 
     function handleMouseLeave() {
         arrayHighlight.set([[0, 0], "tree"])
+        clearHighlight()
     }
 
     function rightClick(e){
@@ -61,9 +71,17 @@
         let options = [{title:"TreeArray sample option",callback:()=>console.log("tree array option clicked")}]
         contextMenu.set([options,pos])
     }
+
+    function getHighlight() {
+        value.forEach(element => {
+            if ($highlightStates[$nodeIndex.get(element)] == "highlighted")
+                return "highlighted"
+        });
+        return ""
+    }
 </script>
 
-<li class="entry togglable {expanded ? "open" : ""}">
+<li class="entry togglable {expanded ? "open" : ""} {getHighlight()}">
     <span class="key" on:click={toggle} on:mouseenter={handleMouseEnter} on:mouseleave={handleMouseLeave}  on:contextmenu|preventDefault={rightClick}>
         <span class="name nb">
             {key}

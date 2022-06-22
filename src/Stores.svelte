@@ -1,12 +1,19 @@
 <script lang="ts" context="module">
 import { highlightingFor } from "@codemirror/language";
-    import type { Node } from 'estree';
+    import type {  Node } from "./Estree/estreeExtension.svelte";
 
     import { writable } from "svelte/store";
 
     type highlightInfo = [[number, number], "arr"|"tree"]
     export const arrayHighlight = writable([[-1, -1], "tree"] as highlightInfo);
     arrayHighlight.subscribe(()=>{})
+
+    type highlightState = "" | "highlighted" | "highlightedRoot"
+    export const highlightStates = writable([] as highlightState[])
+    highlightStates.subscribe(()=>{})
+
+    export const nodeIndex = writable(new Map())
+    nodeIndex.subscribe(()=>{})
 
     type option = {
         title: string,
