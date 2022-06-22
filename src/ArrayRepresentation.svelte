@@ -71,8 +71,6 @@
     function handleMouseEnter(index: number, [from, to]: [number, number]) {
         arrayHighlight.set([[from, to], "arr"])
         highlightFromRoot(index)
-        console.log($highlightStates)
-        console.log($nodeIndex)
     }
 
     function handleMouseLeave() {
@@ -211,6 +209,7 @@
             case 'BinaryExpression':
             case 'AssignmentExpression':
             case 'CompressedBinaryExpression':
+            case 'CompressedLogicalExpression':
             case 'LogicalExpression':
                 return n.operator;
             case 'CallExpression':
