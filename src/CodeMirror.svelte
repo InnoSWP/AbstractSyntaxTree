@@ -3,9 +3,11 @@
     import { EditorState, basicSetup } from '@codemirror/basic-setup'
     import { EditorView, keymap, ViewUpdate } from '@codemirror/view'
     import { indentWithTab } from '@codemirror/commands'
-    import { javascript } from '@codemirror/lang-javascript'
+    import { javascript, esLint } from '@codemirror/lang-javascript'
     import { parseScript, parseModule, Program } from 'esprima'
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
+    import { linter } from '@codemirror/lint'
+    import Linter from "eslint4b-prebuilt";
 
     onMount(() => {
         createEditor()
@@ -31,12 +33,14 @@
         view = new EditorView({
             state: EditorState.create({
                 extensions: [
+                    linter(esLint(new Linter())),
                     EditorView.updateListener.of(updateHandle),
                     basicSetup,
                     javascript(),
                     keymap.of([indentWithTab]),
                     markerField.extension,
                     markerPlugin.extension,
+
                 ],
                 doc: doc,
             }),
