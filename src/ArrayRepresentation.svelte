@@ -27,7 +27,10 @@
             $highlightStates[index] = ""
             index++
 
-            let value = extractValue(n);
+            let value = "";
+            if (n.type != "CallExpression" && n.type != "MemberExpression") {
+                value = extractValue(n);
+            }
             current.push([depth, n.type, value, n.range]);
             for(let child of extractChildren(n)) {
                 current.concat(aux(child, depth+1, current));
