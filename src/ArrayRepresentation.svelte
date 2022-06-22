@@ -2,8 +2,10 @@
     import type {Program} from 'esprima';
     import type {Node} from './Estree/estreeExtension'
     import { extractChildren } from './Estree/estreeUtils';
-    
-    import { arrayHighlight } from "./Stores.svelte";
+
+    import { afterUpdate, beforeUpdate } from "svelte";
+    import { get } from "svelte/store";
+    import { arrayHighlight, nodeIndex, highlightStates } from "./Stores.svelte";
 
     let hfrom: number, hto: number
     let src: string
@@ -14,11 +16,16 @@
 
     function inOrderTraversal(tree: Program): [number, string, string, [number, number]][] {
         type entry = [number, string, string, [number, number]]
+        let index: number = 0
 
         function aux(n: Node, depth: number, current: entry[]): entry[] {
             if(n == null) {
                 return;
             }
+            $nodeIndex.set(n, index)
+            $highlightStates[index] = ""
+            index++
+
             let value = extractValue(n);
             current.push([depth, n.type, value, n.range]);
             for(let child of extractChildren(n)) {
@@ -47,7 +54,7 @@
         return result.map((e, i) => e.fill(0, depths[i]+1))
     }
 
-    function generatePDR(tree: Program): [string, string, [number, number], ...number[]][] {
+    function generatePDR(tree: Program): [number, string, string, [number, number], ...number[]][] {
         if(tree == null) {
             return []
         }
@@ -55,18 +62,52 @@
         let depths = initialArray.map((v) => v[0])
         let coords = generateCoordinates(depths)
         
-        type entry = [string, string, [number, number], ...number[]]
-        let result = initialArray.map((e, i): entry => [e[1], e[2], e[3], ...coords[i]])
+        type entry = [number, string, string, [number, number], ...number[]]
+        let result = initialArray.map((e, i): entry => [i, e[1], e[2], e[3], ...coords[i]])
         return result
     }
 
-    function handleMouseEnter([from, to]: [number, number]) {
+    function handleMouseEnter(index: number, [from, to]: [number, number]) {
         arrayHighlight.set([[from, to], "arr"])
+        highlightFromRoot(index)
+        console.log($highlightStates)
+        console.log($nodeIndex)
     }
 
     function handleMouseLeave() {
         arrayHighlight.set([[0, 0], "arr"])
+        clearHighlight()
     }
+
+    function isChild(ind1: number, ind2: number): boolean {
+        if (ind1 == ind2)
+            return false
+        for (let i = 4; i < PDR[ind1].length && PDR[ind1][i] > 0; i++) {
+            if (PDR[ind1][i] != PDR[ind2][i])
+                return false
+        }
+        return true
+    }
+
+    function highlightFromRoot(index: number) {
+        $highlightStates[index] = "highlightedRoot"
+        for (let i = 0; i < $highlightStates.length; i++) {
+            if (isChild(index, i))
+                $highlightStates[i] = "highlighted"
+        }
+    }
+
+    function clearHighlight() {
+        for (let i = 0; i < get(highlightStates).length; i++)
+            $highlightStates[i] = ""
+    }
+
+    beforeUpdate(()=>{
+        let index = $highlightStates.findIndex(e => e == "highlightedRoot")
+        if (index > -1) {
+            highlightFromRoot(index)
+        }
+    })
 </script>
 
 <div class="h-full overflow-scroll">
@@ -85,9 +126,9 @@
             </tr>
         </thead>
         <tbody>
-            {#each PDR as [type, info, [from, to], ...coords]}
-            <tr class={((hfrom <= from) && (to <= hto) && (src == "tree") ? "highlighted" : "")}>
-                <td class="text-keyword font-light px-0 py-1 border-r border-b w-0 hover:underline cursor-pointer" on:mouseenter={() => handleMouseEnter([from, to])} on:mouseleave={handleMouseLeave}>
+            {#each PDR as [index, type, info, [from, to], ...coords]}
+            <tr class={$highlightStates[index]}>
+                <td class="text-keyword font-light px-0 py-1 border-r border-b w-0 hover:underline cursor-pointer" on:mouseenter={() => handleMouseEnter(index, [from, to])} on:mouseleave={() => handleMouseLeave()}>
                     {type}
                 </td>
                 <td class="text-literal text-xs font-light px-0 py-1 border-r border-b w-0">
@@ -107,6 +148,10 @@
 
 <style lang="postcss">
     .highlighted {
+        @apply bg-amber-200;
+    }
+
+    .highlightedRoot {
         @apply bg-amber-300;
     }
 </style>
@@ -147,6 +192,15 @@
             case 'ForInStatement':
                 return extractValue(n.right);
             case 'FunctionDeclaration':
+                let result = [];
+                n.params.forEach((par) => {
+                    result.push(extractValuesFromPattern(par));
+                });
+                let ans = "";
+                result.forEach((e) => {
+                    ans += e + ", ";
+                });
+                return `${extractValue(n.id)}(${ans.substring(0, ans.length - 2)})`;
             case 'VariableDeclarator':
                 return extractValue(n.id);
             case 'Property':
@@ -181,5 +235,18 @@
         }
     }
 
-    
+
+    function extractValuesFromPattern(pattern: BasePattern) {
+        if (pattern.type == "Identifier") {
+            return [pattern.name];
+        } else {
+            let ans = [];
+            for (let i = 0; i < pattern.properties.length; i++) {
+                console.log(pattern.properties[i]);
+                ans.push(extractValuesFromPattern(pattern.properties[i].value));
+            }
+            return ans;
+        }
+    }
+
 </script>

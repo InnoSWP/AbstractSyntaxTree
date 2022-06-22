@@ -56,7 +56,7 @@
         @apply h-full w-full;
     }
 
-    :global(.highlighted) {
+    :global(.highlightedRoot) {
         @apply bg-amber-300;
     }
 </style>

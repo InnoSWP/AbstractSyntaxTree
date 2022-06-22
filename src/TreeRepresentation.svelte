@@ -13,8 +13,12 @@
 </div>
 
 <style lang="postcss">
-    :global(.highlighted) {
+    :global(.highlightedRoot) {
         @apply bg-amber-300;
+    }
+
+    :global(.highlighted) {
+        @apply bg-amber-200;
     }
 
     .tree-representation {
