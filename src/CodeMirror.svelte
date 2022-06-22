@@ -7,7 +7,6 @@
     import { parseScript, parseModule, Program } from 'esprima'
     import type {  CompressedBinaryExpression, Node } from "./Estree/estreeExtension";
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
-    import estraverse from 'estraverse'
     import { compressBinaryExpression, compressBinaryExpressionsInTree } from './Estree/BinaryExpressionComressor';
 
     onMount(() => {

@@ -242,8 +242,11 @@
             return [pattern.name];
         } else {
             let ans = [];
+            //@ts-expect-error // Temporary fix
             for (let i = 0; i < pattern.properties.length; i++) {
+            //@ts-expect-error // Temporary fix
                 console.log(pattern.properties[i]);
+            //@ts-expect-error // Temporary fix
                 ans.push(extractValuesFromPattern(pattern.properties[i].value));
             }
             return ans;

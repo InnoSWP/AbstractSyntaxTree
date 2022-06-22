@@ -1,10 +1,5 @@
-import estraverse from 'estraverse';
-import type { BinaryExpression } from 'estree';
 import type { CompressedBinaryExpression, Node } from "./estreeExtension";
 import { extractChildren, setChildren } from './estreeUtils';
-//import type {Program} from 'esprima';
-//import type {  Node } from "./CustomNodeTypes/estreeExtension";
-//import { arrayHighlight } from "./Stores.svelte";
 
 const operatorsToCompress = ['+', '&', '&&', '|', '||', '^', '*']
 
