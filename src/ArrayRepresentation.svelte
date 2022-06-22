@@ -18,6 +18,8 @@
     function inOrderTraversal(tree: Program): [number, string, string, [number, number]][] {
         type entry = [number, string, string, [number, number]]
         let index: number = 0
+        $nodeIndex.clear()
+        $highlightStates.length = 0
 
         function aux(n: Node, depth: number, current: entry[]): entry[] {
             if(n == null) {
