@@ -25,6 +25,9 @@ To use this web application just go to the following [link](https://innoswp.gith
 
 ## Demonstration
 
+<p>Starting page:</p>
+<img src="./screens/starting-page.png">
+
 ## Technologies used
 
 The application was build using [Svelte](https://svelte.dev/) framework. As a code editor we used [CodeMirror](https://codemirror.net/).
