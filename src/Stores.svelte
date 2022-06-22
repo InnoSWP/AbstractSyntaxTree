@@ -8,6 +8,13 @@ import { highlightingFor } from "@codemirror/language";
     export const arrayHighlight = writable([[-1, -1], "tree"] as highlightInfo);
     arrayHighlight.subscribe(()=>{})
 
+    type highlightState = "" | "highlighted" | "highlightedRoot"
+    export const highlightStates = writable([] as highlightState[])
+    highlightStates.subscribe(()=>{})
+
+    export const nodeIndex = writable(new Map())
+    nodeIndex.subscribe(()=>{})
+
     type option = {
         title: string,
         callback: () => void,
