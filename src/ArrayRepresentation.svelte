@@ -189,6 +189,15 @@ import { get } from "svelte/store";
             case 'ForInStatement':
                 return extractValue(n.right);
             case 'FunctionDeclaration':
+                let result = [];
+                n.params.forEach((par) => {
+                    result.push(extractValuesFromPattern(par));
+                });
+                let ans = "";
+                result.forEach((e) => {
+                    ans += e + ", ";
+                });
+                return `${extractValue(n.id)}(${ans.substring(0, ans.length - 2)})`;
             case 'VariableDeclarator':
                 return extractValue(n.id);
             case 'Property':
@@ -219,6 +228,19 @@ import { get } from "svelte/store";
             case 'SequenceExpression':
             default:
                 return "";
+        }
+    }
+
+    function extractValuesFromPattern(pattern: BasePattern) {
+        if (pattern.type == "Identifier") {
+            return [pattern.name];
+        } else {
+            let ans = [];
+            for (let i = 0; i < pattern.properties.length; i++) {
+                console.log(pattern.properties[i]);
+                ans.push(extractValuesFromPattern(pattern.properties[i].value));
+            }
+            return ans;
         }
     }
 
