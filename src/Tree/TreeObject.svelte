@@ -2,11 +2,11 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
-    import type { Node } from 'estree';
+    import type {  Node } from "../Estree/estreeExtension.svelte";
     import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex } from "../Stores.svelte";
     import CodeMirror from "../CodeMirror.svelte";
-import { get } from "svelte/store";
-    
+    import { get } from "svelte/store";
+
     export let obj: Node
     export let expanded = true
     export let key: string = ""

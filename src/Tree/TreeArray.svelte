@@ -2,8 +2,8 @@
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
     import { arrayHighlight , contextMenu, highlightStates, nodeIndex} from "../Stores.svelte";
-    import type { Node } from 'estree';
-import { get } from "svelte/store";
+    import type { Node } from '../Estree/estreeExtension.svelte';
+    import { get } from "svelte/store";
 
     export let expanded: boolean = true
     export let key: string = "", value = []
