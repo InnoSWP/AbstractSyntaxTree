@@ -243,7 +243,6 @@
         } else if (pattern.type == "ObjectPattern"){
             let ans = [];
             for (let i = 0; i < pattern.properties.length; i++) {
-                console.log(pattern.properties[i]);
                 ans.push(extractValuesFromPattern(pattern.properties[i].value));
             }
             return ans;
