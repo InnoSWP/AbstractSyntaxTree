@@ -47,6 +47,11 @@ git clone https://github.com/InnoSWP/AbstractSyntaxTree
 cd <PATH>/AbstractSyntaxTree
 ```
 
+3. Run
+```console
+npm install
+```
+
 3. Now you can do any changes and modification in project.
 
 4. To run this project on your computer use following command
