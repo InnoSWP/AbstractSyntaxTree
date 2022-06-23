@@ -27,7 +27,10 @@
             $highlightStates[index] = ""
             index++
 
-            let value = extractValue(n);
+            let value = "";
+            if (n.type != "CallExpression" && n.type != "MemberExpression") {
+                value = extractValue(n);
+            }
             current.push([depth, n.type, value, n.range]);
             for(let child of extractChildren(n)) {
                 current.concat(aux(child, depth+1, current));
@@ -246,6 +249,15 @@
                 ans.push(extractValuesFromPattern(pattern.properties[i].value));
             }
             return ans;
+        } else if (pattern.type == "ArrayPattern") {
+            let ans = [];
+            for (let i = 0; i < pattern.elements.length; i++) {
+                ans.push(extractValuesFromPattern(pattern.elements[i]));
+            }
+        } else if (pattern.type == "AssignmentPattern") {
+            return extractValuesFromPattern(pattern.left);
+        } else if (pattern.type == "RestElement") {
+            return extractValuesFromPattern(pattern.argument);
         } else {
             return [];
         }
