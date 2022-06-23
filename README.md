@@ -52,9 +52,9 @@ cd <PATH>/AbstractSyntaxTree
 npm install
 ```
 
-3. Now you can do any changes and modification in project.
+4. Now you can do any changes and modification in project.
 
-4. To run this project on your computer use following command
+5. To run this project on your computer use following command
 ```console
 npm run dev
 ```
