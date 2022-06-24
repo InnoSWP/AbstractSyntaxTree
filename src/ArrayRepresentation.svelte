@@ -18,6 +18,8 @@
     function inOrderTraversal(tree: Program): [number, string, string, [number, number]][] {
         type entry = [number, string, string, [number, number]]
         let index: number = 0
+        $nodeIndex.clear()
+        $highlightStates.length = 0
 
         function aux(n: Node, depth: number, current: entry[]): entry[] {
             if(n == null) {
@@ -71,8 +73,6 @@
     function handleMouseEnter(index: number, [from, to]: [number, number]) {
         arrayHighlight.set([[from, to], "arr"])
         highlightFromRoot(index)
-        console.log($highlightStates)
-        console.log($nodeIndex)
     }
 
     function handleMouseLeave() {
@@ -211,6 +211,7 @@
             case 'BinaryExpression':
             case 'AssignmentExpression':
             case 'CompressedBinaryExpression':
+            case 'CompressedLogicalExpression':
             case 'LogicalExpression':
                 return n.operator;
             case 'CallExpression':
