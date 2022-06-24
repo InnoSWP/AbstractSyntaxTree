@@ -1,4 +1,4 @@
-name: Svelte test build
+name: Svelte linter
 
 on:
   push:
