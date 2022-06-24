@@ -29,7 +29,10 @@
             $highlightStates[index] = ""
             index++
 
-            let value = extractValue(n);
+            let value = "";
+            if (n.type != "CallExpression" && n.type != "MemberExpression") {
+                value = extractValue(n);
+            }
             current.push([depth, n.type, value, n.range]);
             for(let child of extractChildren(n)) {
                 current.concat(aux(child, depth+1, current));
@@ -239,18 +242,27 @@
 
 
     function extractValuesFromPattern(pattern: Pattern) {
-        if (pattern.type == "Identifier") {
-            return [pattern.name];
-        } else {
-            let ans = [];
-            //@ts-expect-error // Temporary fix
-            for (let i = 0; i < pattern.properties.length; i++) {
-            //@ts-expect-error // Temporary fix
-                console.log(pattern.properties[i]);
-            //@ts-expect-error // Temporary fix
-                ans.push(extractValuesFromPattern(pattern.properties[i].value));
-            }
-            return ans;
+        switch (pattern.type) {
+            case "Identifier":
+                return [pattern.name];
+            case "ObjectPattern":
+                let answer = [];
+                for (let i = 0; i < pattern.properties.length; i++) {
+                    answer.push(extractValuesFromPattern(pattern.properties[i].value));
+                }
+                return answer;
+            case "ArrayPattern":
+                let ans = [];
+                for (let i = 0; i < pattern.elements.length; i++) {
+                    ans.push(extractValuesFromPattern(pattern.elements[i]));
+                }
+                return ans;
+            case "AssignmentPattern":
+                return extractValuesFromPattern(pattern.left);
+            case "RestElement":
+                return extractValuesFromPattern(pattern.argument);
+            case "MemberExpression":
+                return [extractValue(pattern.property)];
         }
     }
 
