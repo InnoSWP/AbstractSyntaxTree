@@ -96,14 +96,16 @@
     function highlightFromRoot(index: number) {
         $highlightStates[index] = "highlightedRoot"
         for (let i = 0; i < $highlightStates.length; i++) {
-            if (isChild(index, i))
+            if (isChild(index, i)){
                 $highlightStates[i] = "highlighted"
+            }
         }
     }
 
     function clearHighlight() {
-        for (let i = 0; i < get(highlightStates).length; i++)
+        for (let i = 0; i < get(highlightStates).length; i++){
             $highlightStates[i] = ""
+        }
     }
 
     beforeUpdate(()=>{
