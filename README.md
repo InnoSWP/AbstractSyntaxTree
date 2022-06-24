@@ -15,7 +15,7 @@ To use this web application just go to the following [link](https://innoswp.gith
 
 ## List of features
 
-### Already have:
+### Already have
 
 - Immediate result when typing code without pressing any buttons
 - Synchronous highlighting part of code and corresponding nodes in AST and lines in PDR
