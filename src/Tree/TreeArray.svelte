@@ -57,8 +57,9 @@
     }
 
     function clearHighlight() {
-        for (let i = 0; i < get(highlightStates).length; i++)
+        for (let i = 0; i < get(highlightStates).length; i++){
             $highlightStates[i] = ""
+        }
     }
 
     function handleMouseLeave() {
