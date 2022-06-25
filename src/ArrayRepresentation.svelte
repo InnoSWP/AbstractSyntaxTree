@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {Program} from 'esprima';
-    import type {Node} from './Estree/estreeExtension.svelte'
+    import type {Node} from './Estree/estreeExtension'
     import { extractChildren } from './Estree/estreeUtils';
 
     import { afterUpdate, beforeUpdate } from "svelte";

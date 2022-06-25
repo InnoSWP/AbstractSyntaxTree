@@ -5,8 +5,8 @@
     import { indentWithTab } from '@codemirror/commands'
     import { javascript, esLint } from '@codemirror/lang-javascript'
     import { parseScript, parseModule, Program } from 'esprima'
-    import type {  CompressedBinaryExpression, Node } from "./Estree/estreeExtension.svelte";
-    import { compressBinaryExpression, compressBinaryExpressionsInTree } from './Estree/BinaryExpressionComressor.svelte';
+    import type {  CompressedBinaryExpression, Node } from "./Estree/estreeExtension";
+    import { compressBinaryExpression, compressBinaryExpressionsInTree } from './Estree/binaryExpressionCompressor';
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
     import { linter } from '@codemirror/lint'
     import Linter from "eslint4b-prebuilt";
