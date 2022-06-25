@@ -77,4 +77,24 @@ describe("Expression compressor", () => {
         }
     });
 
+    it("does not compress incompressable expressions", async function(){
+        let initialTree = parseModule(`console.log(arr[index]).func()`, { range: true })
+        let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
+
+        let doesNotHaveCompressedExpressions = compressedExpressions.length == 0;
+        assert(doesNotHaveCompressedExpressions)
+    })
+
+    it("compresses nested expressions", async function () {
+
+        let initialTree = parseModule("console.log(3+3+3+(3-3-3*2*3*4))", { range: true })
+        let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
+
+        let plusExpression = compressedExpressions.find(expr=>expr.operator == "+");
+        assert(plusExpression != null && plusExpression.operands.length == 4)
+
+        let multiplicationExpression = compressedExpressions.find(expr=>expr.operator == "*");
+        assert(multiplicationExpression != null && multiplicationExpression.operands.length == 4)
+    });
+
 });

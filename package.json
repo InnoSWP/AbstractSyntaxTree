@@ -7,7 +7,7 @@
     "dev": "rollup -c -w --environment dir:public",
     "start": "sirv public -p 8080",
     "validate": "svelte-check",
-    "test": "npx nyc --reporter=text mocha"
+    "test": "scripty && npx nyc --reporter=text mocha"
   },
   "devDependencies": {
     "@codemirror/basic-setup": "^0.20.0",

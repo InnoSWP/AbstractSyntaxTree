@@ -12,3 +12,4 @@ yarn.lock
 /build/bundle-tests.js
 /build/bundle-tests.js.map
 /build/bundle.css
+/.nyc_output

@@ -5,8 +5,8 @@ import type estree from 'estree'
 
 export function setChildren(n: Node, newChildrenInNewType: Node[]) {
     let newChildren = newChildrenInNewType as any[];
-    return fmap(n,(_childNode)=>{
-        return newChildren.splice(0,1)[0]
+    return fmap(n, (_childNode) => {
+        return newChildren.splice(0, 1)[0]
     })
 }
 
@@ -18,8 +18,8 @@ function exhaustiveMatchingGuard(_: never): never {
     throw new Error('Should not be able to reach here')
 }
 
-function fmap(n:Node,f:(Node)=>Node):Node{
-    let operate = (nodes:Node[]):any=>nodes.map(f)
+function fmap(n: Node, f: (Node) => Node): Node {
+    let operate = (nodes: Node[]): Array<any> => nodes.map(f)
     let operated;
     switch (n.type) {
         case 'BlockStatement':
@@ -37,20 +37,32 @@ function fmap(n:Node,f:(Node)=>Node):Node{
             [n.label, n.body] = operate([n.label, n.body])
             return;
         case 'ContinueStatement':
-            [n.label] = operate([n.label])
+            if (n.label != null)
+                [n.label] = operate([n.label])
             return;
         case 'IfStatement':
         case 'ConditionalExpression':
-            [n.test, n.consequent, n.alternate] = operate([n.test, n.consequent, n.alternate])
+            [n.test, n.consequent] = operate([n.test, n.consequent])
+            if (n.alternate != null)
+                [n.alternate] = operate([n.alternate])
             return;
         case 'SwitchStatement':
             [n.discriminant, ...n.cases] = operate([n.discriminant, ...n.cases])
             return;
         case 'SwitchCase':
-            [n.test, ...n.consequent] = operate([n.test, ...n.consequent])
+            if (n.test != null) {
+                [n.test] = operate([n.test])
+            }
+            [...n.consequent] = operate([...n.consequent])
             return;
         case 'TryStatement':
-            [n.block, n.handler, n.finalizer] = operate([n.block, n.handler, n.finalizer])
+            [n.block] = operate([n.block])
+            if (n.handler != null) {
+                [n.handler] = operate([n.handler])
+            }
+            if (n.finalizer != null) {
+                [n.finalizer] = operate([n.finalizer])
+            }
             return;
         case 'CatchClause':
             [n.param, n.body] = operate([n.param, n.body])
@@ -60,7 +72,16 @@ function fmap(n:Node,f:(Node)=>Node):Node{
             [n.test, n.body] = operate([n.test, n.body])
             return;
         case 'ForStatement':
-            [n.init, n.test, n.update, n.body] = operate([n.init, n.test, n.update, n.body])
+            if (n.init != null) {
+                [n.init] = operate([n.init])
+            }
+            if (n.test != null) {
+                [n.test] = operate([n.test])
+            }
+            if (n.update != null) {
+                [n.update] = operate([n.update])
+            }
+            [n.body] = operate([n.body])
             return;
         case 'ForOfStatement':
         case 'ForInStatement':
@@ -68,6 +89,12 @@ function fmap(n:Node,f:(Node)=>Node):Node{
             return;
         case 'FunctionExpression':
         case 'FunctionDeclaration':
+            if (n.id == null) {
+                operated = operate([...n.params, n.body]);
+                n.body = extractLastChild(operated);
+                [...n.params] = operated
+                return;
+            }
             operated = operate([n.id, ...n.params, n.body]);
             n.body = extractLastChild(operated);
             [n.id, ...n.params] = operated
@@ -76,7 +103,10 @@ function fmap(n:Node,f:(Node)=>Node):Node{
             n.declarations = operate(n.declarations)
             return;
         case 'VariableDeclarator':
-            [n.id, n.init] = operate([n.id, n.init])
+            [n.id] = operate([n.id])
+            if (n.init != null) {
+                [n.init] = operate([n.init]);
+            }
             return;
         case 'ArrayExpression':
         case 'ArrayPattern':
@@ -92,14 +122,15 @@ function fmap(n:Node,f:(Node)=>Node):Node{
             [...n.params] = operated;
             return;
         case 'UnaryExpression':
-        case 'YieldExpression': // argument?
+        case 'YieldExpression':
         case 'UpdateExpression':
         case 'AwaitExpression':
         case 'SpreadElement':
         case 'ThrowStatement':
         case 'ReturnStatement':
         case 'RestElement':
-            [n.argument] = operate([n.argument])
+            if (n.argument != null)
+                [n.argument] = operate([n.argument])
             return;
         case 'BinaryExpression':
         case 'AssignmentExpression':
@@ -150,7 +181,7 @@ function fmap(n:Node,f:(Node)=>Node):Node{
             return;
         case 'ImportSpecifier':
             [n.imported, n.local] = operate([n.imported, n.local])
-                return;
+            return;
         case 'TaggedTemplateExpression':
             [n.quasi, n.tag] = operate([n.quasi, n.tag])
             return;
@@ -165,7 +196,13 @@ function fmap(n:Node,f:(Node)=>Node):Node{
             [n.declaration] = operate([n.declaration])
             return;
         case 'ExportNamedDeclaration':
-            n.specifiers = operate(n.specifiers); // declaration? source?
+            n.specifiers = operate(n.specifiers);
+            if (n.declaration != null) {
+                [n.declaration] = operate([n.declaration])
+            }
+            if (n.source != null) {
+                [n.source] = operate([n.source])
+            }
             return;
         default:
             return exhaustiveMatchingGuard(n);
@@ -173,11 +210,11 @@ function fmap(n:Node,f:(Node)=>Node):Node{
 }
 
 export function extractChildren(n: Node): Node[] {
-    let extractedChildren:Node[] = []
-    fmap(n,(childNode)=>{
+    let extractedChildren: Node[] = []
+    fmap(n, (childNode) => {
         extractedChildren = extractedChildren.concat(childNode)
-        return childNode;   
+        return childNode;
     })
     return extractedChildren;
-    
+
 }
