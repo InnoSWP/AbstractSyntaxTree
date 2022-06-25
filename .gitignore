@@ -1,8 +1,14 @@
 /node_modules/
 /public/build/
 .vscode/
+.idea/
 .DS_Store
 package-lock.json
 yarn.lock
 /docs/
 /.idea/workspace.xml
+/src/main.js
+/src/main.js.map
+/build/bundle-tests.js
+/build/bundle-tests.js.map
+/build/bundle.css
