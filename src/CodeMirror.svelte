@@ -27,9 +27,7 @@
             try {
                 tree = parseModule(view.state.doc.toString(), { range: true })
                 tree = compressBinaryExpressionsInTree(tree)
-            } catch(e) {
-             //   console.log(e)
-            }
+            } catch {}
         }
     }
 

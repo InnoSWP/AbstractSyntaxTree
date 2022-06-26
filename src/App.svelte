@@ -10,9 +10,10 @@
   import type { EditorView } from '@codemirror/view';
   import MarkerPlugin from "./MarkerPlugin.svelte";
   import Menu from "./CustomContextMenu/Menu.svelte";
-  import {contextMenu} from "./Stores.svelte";
+  import { contextMenu } from "./Stores.svelte";
   import { compress, decompress } from 'lzw-compressor';
-import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
+  import { generateGraphviz } from "./Tree/treeExport"
+  import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
 
   let view: EditorView = null
   let tree: Program
@@ -36,14 +37,40 @@ import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
       "link": url,
     })
   }
-
+  
   function closeContextMenu() {
     contextMenu.set([[],{x:0,y:0}])
   }
 
-
   let contextMenuOptions: {title:string,callback: () => void}[], contextMenuPosition:{x:number,y:number}
   $: [contextMenuOptions, contextMenuPosition] = $contextMenu
+
+  async function getNewFileHandle() {
+    const options = {
+      suggestedName: 'AST.dot',
+      types: [{
+        description: 'Graphviz file',
+        accept: {
+          'graphviz/dot': ['.dot'],
+        },
+      }]
+    };
+    const handle = await window.showSaveFilePicker(options);
+    return handle;
+    }
+
+    async function writeFile(fileHandle, contents) {
+      const writable = await fileHandle.createWritable();
+      await writable.write(contents);
+      await writable.close();
+    }
+    
+    async function Download(tree: Program) {
+      let handle = await getNewFileHandle();
+      let contents = generateGraphviz(tree);
+      writeFile(handle, contents);
+    }
+  
 </script>
 
 <script lang="ts" context="module">
@@ -69,9 +96,12 @@ import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
         <button on:click={openShare} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 m-2 rounded">
           Share
         </button>
+        <button on:click={() => Download(tree)} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 m-2 rounded">
+          Export
+        </button>
       </div>
   </div>
-  
+
   <div class="h-screen w-4/12 bg-treebg">
      <TreeRepresentation bind:tree />
   </div>

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import { closeModal} from 'svelte-modals';
+    import { closeModal } from 'svelte-modals';
 
     export let title: string
     export let isOpen: boolean
