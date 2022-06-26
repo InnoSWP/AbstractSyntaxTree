@@ -163,7 +163,7 @@
 </style>
 
 <script lang="ts" context="module">
-    function extractValue(n: Node): string {
+    export function extractValue(n: Node): string {
         if(n == null) {
             return "";
         }
