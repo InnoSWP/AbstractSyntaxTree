@@ -14,6 +14,7 @@
   import { compress, decompress } from 'lzw-compressor';
   import { generateGraphviz } from "./Tree/treeExport"
   import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
+  import { saveAs, FileSaver, File } from 'file-saver';
 
   let view: EditorView = null
   let tree: Program
@@ -44,31 +45,10 @@
 
   let contextMenuOptions: {title:string,callback: () => void}[], contextMenuPosition:{x:number,y:number}
   $: [contextMenuOptions, contextMenuPosition] = $contextMenu
-
-  async function getNewFileHandle() {
-    const options = {
-      suggestedName: 'AST.dot',
-      types: [{
-        description: 'Graphviz file',
-        accept: {
-          'graphviz/dot': ['.dot'],
-        },
-      }]
-    };
-    const handle = await window.showSaveFilePicker(options);
-    return handle;
-    }
-
-    async function writeFile(fileHandle, contents) {
-      const writable = await fileHandle.createWritable();
-      await writable.write(contents);
-      await writable.close();
-    }
-    
+  
     async function Download(tree: Program) {
-      let handle = await getNewFileHandle();
-      let contents = generateGraphviz(tree);
-      writeFile(handle, contents);
+      var blob = new Blob([generateGraphviz(tree)], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, "AST.dot");
     }
   
 </script>

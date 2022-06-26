@@ -1,7 +1,8 @@
 import type { Node }  from "../Estree/estreeExtension";
-import { extractChildren, setChildren } from '../Estree/estreeUtils';
+import { extractChildren } from '../Estree/estreeUtils';
 import * as gr from 'ts-graphviz';
 import { extractValue } from "../ArrayRepresentation.svelte";
+
 
 export function generateGraphviz(tree: Node){
     if (tree == null) {
