@@ -14,7 +14,7 @@
   import { compress, decompress } from 'lzw-compressor';
   import { generateGraphviz } from "./Tree/treeExport"
   import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
-  import { saveAs, FileSaver, File } from 'file-saver';
+  import { saveAs } from 'file-saver';
 
   let view: EditorView = null
   let tree: Program
