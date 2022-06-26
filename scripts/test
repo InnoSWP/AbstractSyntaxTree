@@ -5,7 +5,3 @@ if [ -z $1 ]; then
 else
   npx rollup -c rollup.test.config.js -i $1
 fi
-
-#if [ $? == 0 ]; then
-#  npx mocha -- --require source-map-support/register
-#fi
