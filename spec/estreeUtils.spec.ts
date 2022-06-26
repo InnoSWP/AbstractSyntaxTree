@@ -1,5 +1,5 @@
-import { extractChildren,setChildren} from '../src/Estree/estreeUtils';
-import type {Node} from '../src/Estree/estreeExtension'
+import { extractChildren, setChildren } from '../src/Estree/estreeUtils';
+import type { Node } from '../src/Estree/estreeExtension'
 import assert, { deepEqual } from "assert";
 
 import { parseModule } from "esprima";
@@ -54,22 +54,22 @@ export { variable1 as name1, variable2 as default, nameN };
 
 `
 
-function recursivelySetChildren(node:Node, f:(Node)=>Node){
-    let children = extractChildren(node)
-    children.forEach(child=>{
-        recursivelySetChildren(child,f);
-    })
-    setChildren(node,children.map(f))
+function recursivelySetChildren(node: Node, f: (Node) => Node) {
+  let children = extractChildren(node)
+  children.forEach(child => {
+    recursivelySetChildren(child, f);
+  })
+  setChildren(node, children.map(f))
 }
 
 describe("Children extraction", () => {
-    it("cancels out with children setting", async function () {
-        let incrediblyComplexTree = parseModule(complexCode, { range: true })
+  it("cancels out with children setting", async function () {
+    let incrediblyComplexTree = parseModule(complexCode, { range: true })
 
-        let initialTree = JSON.parse(JSON.stringify(incrediblyComplexTree))
-        recursivelySetChildren(incrediblyComplexTree,(node)=>node)
-        let recursivelyResetTree = incrediblyComplexTree;
-        deepEqual(initialTree,recursivelyResetTree)
-    });
-    
+    let initialTree = JSON.parse(JSON.stringify(incrediblyComplexTree))
+    recursivelySetChildren(incrediblyComplexTree, (node) => node)
+    let recursivelyResetTree = incrediblyComplexTree;
+    deepEqual(initialTree, recursivelyResetTree)
+  });
+
 })
