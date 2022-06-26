@@ -20,7 +20,9 @@
     "@rollup/plugin-typescript": "^8.1.0",
     "@tsconfig/svelte": "^1.0.0",
     "@types/esprima": "^4.0.3",
+    "@types/file-saver": "^2.0.5",
     "@types/node": "^18.0.0",
+    "@types/wicg-file-system-access": "^2020.9.5",
     "autoprefixer": "^10.2.3",
     "eslint": "^8.18.0",
     "eslint-plugin-fp": "^2.3.0",
@@ -57,6 +59,7 @@
     "eslint-plugin-svelte3": "^2.7.3",
     "eslint4b-prebuilt": "^6.7.2",
     "esprima": "^4.0.1",
+    "file-saver": "^2.0.5",
     "jsdom": "^20.0.0",
     "lzw-compressor": "^21.6.5",
     "mocha": "^10.0.0",
@@ -65,7 +68,8 @@
     "serve": "^13.0.2",
     "sirv-cli": "^1.0.0",
     "source-map-support": "^0.5.21",
-    "svelte-modals": "^1.1.0"
+    "svelte-modals": "^1.1.0",
+    "ts-graphviz": "^0.16.0"
   },
   "resolutions": {
     "@codemirror/state": "0.20.1"
