@@ -1,4 +1,10 @@
 # Abstract Syntax Tree
+[![pages-build-deployment](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/pages/pages-build-deployment/badge.svg?branch=gh-pages)](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/pages/pages-build-deployment)
+[![Svelte test build](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/svelte-build.yml/badge.svg?branch=main)](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/svelte-build.yml)
+[![Svelte linter](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/svelte-linter.yml/badge.svg?branch=main)](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/svelte-linter.yml)
+[![Lint codebase (w/o svelte)](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/linter.yml)
+[![SonarCloud build](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/build.yml/badge.svg?branch=main)](https://github.com/InnoSWP/AbstractSyntaxTree/actions/workflows/build.yml)
+
 
 Abstract Syntax Tree - is the web application that visualize your JavaScript code as the Abstract Syntax Tree(AST) and its Parallel Data Representation(PDR).
 
