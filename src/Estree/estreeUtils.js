@@ -95,13 +95,14 @@ export function setChildren(n,newChildren ) {
             n.expressions=newChildren;
             return;
         case 'CompressedBinaryExpression':
+        case 'CompressedLogicalExpression':
             n.operands=newChildren;
             return;
     }
 }
 
 function extractLastChild(arr){
-    return arr.splice(arr.length-1,1);
+    return arr.splice(arr.length-1,1)[0];
 }
 
 export function extractChildren(n) {
@@ -173,6 +174,7 @@ export function extractChildren(n) {
         case 'SequenceExpression':
             return n.expressions;
         case 'CompressedBinaryExpression':
+        case 'CompressedLogicalExpression':
             return [...n.operands];
     }
 

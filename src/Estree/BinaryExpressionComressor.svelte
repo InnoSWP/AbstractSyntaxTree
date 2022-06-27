@@ -1,12 +1,12 @@
 
 <script lang="ts" context="module">
-    import type { CompressedBinaryExpression, Node } from "./estreeExtension.svelte";
+    import type { CompressedBinaryExpression, CompressedLogicalExpression, Node } from "./estreeExtension.svelte";
     import { extractChildren, setChildren } from './estreeUtils';
 
     const operatorsToCompress = ['+', '&', '&&', '|', '||', '^', '*']
 
     export function compressBinaryExpression(expressionToCompress: Node): Node {
-        if (expressionToCompress.type != "BinaryExpression")
+        if (expressionToCompress.type != "BinaryExpression" && expressionToCompress.type != "LogicalExpression")
             return expressionToCompress;
         let binaryOperator = expressionToCompress.operator;
         if (operatorsToCompress.includes(binaryOperator)) {
@@ -14,17 +14,25 @@
             let newRight = extractSideOfBinaryExpression(expressionToCompress.right,binaryOperator)
 
             const { left, right, type, ...inheritedPart } = expressionToCompress;
-            return {
-                ...inheritedPart,
-                type: "CompressedBinaryExpression",
-                operands: [...newLeft, ...newRight],
-            } as CompressedBinaryExpression;
+            if (expressionToCompress.type == "BinaryExpression"){
+                return {
+                    ...inheritedPart,
+                    type: "CompressedBinaryExpression",
+                    operands: [...newLeft, ...newRight],
+                } as CompressedBinaryExpression;
+            }else{
+                return {
+                    ...inheritedPart,
+                    type: "CompressedLogicalExpression",
+                    operands: [...newLeft, ...newRight],
+                } as CompressedLogicalExpression;
+            }
         }
         return expressionToCompress;
     }
 
     function extractSideOfBinaryExpression(side:Node,operator:string):Node[]{
-            if (side.type == "CompressedBinaryExpression") {
+            if (side.type == "CompressedBinaryExpression" || side.type == "CompressedLogicalExpression") {
                 if (side.operator == operator) {
                     return [...side.operands]
                 } else {
@@ -42,7 +50,7 @@
 
         setChildren(tree,compressedChildren);
 
-        if (tree.type == "BinaryExpression")
+        if (tree.type == "BinaryExpression" || tree.type == "LogicalExpression")
             tree = compressBinaryExpression(tree);
 
         return tree;

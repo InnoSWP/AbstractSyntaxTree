@@ -22,14 +22,14 @@
             allChilrenFolded = allChilrenFolded && response.hasFoldedCompletely
         })
 
-        if (allChilrenFolded && node.type == "BinaryExpression"){
+        if (allChilrenFolded && (node.type == "BinaryExpression" || node.type == "LogicalExpression")){
             let expressionToEvaluate = 
                 descriptions[0].replaceWith +
                 node.operator +
                 descriptions[1].replaceWith
             let evaluatatedExpression = JSON.stringify(eval(expressionToEvaluate))
             return {hasFoldedCompletely:true, descriptions:[{from:node.left.range[0],to:node.right.range[1],replaceWith:evaluatatedExpression}]}
-        }else if (allChilrenFolded && node.type == "CompressedBinaryExpression"){
+        }else if (allChilrenFolded && (node.type == "CompressedBinaryExpression" || node.type == "CompressedLogicalExpression")){
             let expressionToEvaluate = descriptions.map(description =>description.replaceWith).join(node.operator)
             let evaluatatedExpression = JSON.stringify(eval(expressionToEvaluate))
             

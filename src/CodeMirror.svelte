@@ -14,6 +14,7 @@
     onMount(() => {
         createEditor()
         tree = parseModule(view.state.doc.toString(), { range: true })
+        tree = compressBinaryExpressionsInTree(tree)
     })
     export let view: EditorView = null
     export let doc: string = ""
@@ -27,6 +28,7 @@
                 tree = parseModule(view.state.doc.toString(), { range: true })
                 tree = compressBinaryExpressionsInTree(tree)
             } catch(e) {
+             //   console.log(e)
             }
         }
     }
