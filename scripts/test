@@ -1,0 +1,11 @@
+#!/usr/bin/env bash
+
+if [ -z $1 ]; then
+  npx rollup -c rollup.test.config.js
+else
+  npx rollup -c rollup.test.config.js -i $1
+fi
+
+if [ $? == 0 ]; then
+  npx mocha -- --require source-map-support/register
+fi

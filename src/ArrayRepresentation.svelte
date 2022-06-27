@@ -1,6 +1,6 @@
 <script lang="ts">
     import type {Program} from 'esprima';
-    import type {Node} from './Estree/estreeExtension.svelte'
+    import type {Node} from './Estree/estreeExtension'
     import { extractChildren } from './Estree/estreeUtils';
 
     import { afterUpdate, beforeUpdate } from "svelte";
@@ -96,14 +96,16 @@
     function highlightFromRoot(index: number) {
         $highlightStates[index] = "highlightedRoot"
         for (let i = 0; i < $highlightStates.length; i++) {
-            if (isChild(index, i))
+            if (isChild(index, i)){
                 $highlightStates[i] = "highlighted"
+            }
         }
     }
 
     function clearHighlight() {
-        for (let i = 0; i < get(highlightStates).length; i++)
+        for (let i = 0; i < get(highlightStates).length; i++){
             $highlightStates[i] = ""
+        }
     }
 
     beforeUpdate(()=>{
@@ -161,7 +163,7 @@
 </style>
 
 <script lang="ts" context="module">
-    function extractValue(n: Node): string {
+    export function extractValue(n: Node): string {
         if(n == null) {
             return "";
         }

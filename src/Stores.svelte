@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 import { highlightingFor } from "@codemirror/language";
-    import type {  Node } from "./Estree/estreeExtension.svelte";
+    import type {  Node } from "./Estree/estreeExtension";
 
     import { writable } from "svelte/store";
 
