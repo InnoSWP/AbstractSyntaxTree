@@ -28,6 +28,7 @@
     doc = decoded
   }
 
+  // Function to show share dialog to user
   function openShare() {
     let raw: string = view.state.doc.toString();
     let encoded: string = encodeURIComponent(compress(raw));
@@ -39,6 +40,7 @@
     })
   }
   
+  // Function to close context menu
   function closeContextMenu() {
     contextMenu.set([[],{x:0,y:0}])
   }

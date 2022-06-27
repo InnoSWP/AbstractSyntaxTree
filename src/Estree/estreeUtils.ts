@@ -2,7 +2,7 @@
 import type { Node } from './estreeExtension'
 import type estree from 'estree'
 
-
+// Function to set children for current node
 export function setChildren(n: Node, newChildrenInNewType: Node[]) {
     let newChildren = newChildrenInNewType as any[];
     return fmap(n,(_childNode)=>{
@@ -10,6 +10,7 @@ export function setChildren(n: Node, newChildrenInNewType: Node[]) {
     })
 }
 
+// Function to extract last children
 function extractLastChild(arr: Array<any>) {
     return arr.splice(arr.length - 1, 1)[0];
 }
@@ -172,6 +173,7 @@ function fmap(n:Node,f:(Node)=>Node):Node{
     }
 }
 
+// Function to extract children from node
 export function extractChildren(n: Node): Node[] {
     let extractedChildren:Node[] = []
     fmap(n,(childNode)=>{

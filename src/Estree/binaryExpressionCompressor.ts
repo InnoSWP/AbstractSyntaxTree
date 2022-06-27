@@ -3,6 +3,7 @@ import { extractChildren, setChildren } from './estreeUtils';
 
 const operatorsToCompress = ['+', '&', '&&', '|', '||', '^', '*']
 
+// Function to compress binary expression
 export function compressBinaryExpression(expressionToCompress: Node): Node {
     if (expressionToCompress.type != "BinaryExpression" && expressionToCompress.type != "LogicalExpression")
         return expressionToCompress;
@@ -29,6 +30,7 @@ export function compressBinaryExpression(expressionToCompress: Node): Node {
     return expressionToCompress;
 }
 
+// Function to extract side of given binary expression
 function extractSideOfBinaryExpression(side: Node, operator: string): Node[] {
     if (side.type == "CompressedBinaryExpression" || side.type == "CompressedLogicalExpression") {
         if (side.operator == operator) {
@@ -41,6 +43,7 @@ function extractSideOfBinaryExpression(side: Node, operator: string): Node[] {
     }
 }
 
+// Function to compress binary expression in tree
 export function compressBinaryExpressionsInTree(tree: Node): Node {
 
     let oldChildren = extractChildren(tree);

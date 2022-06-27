@@ -4,6 +4,7 @@ import * as gr from 'ts-graphviz';
 import { extractValue } from "../ArrayRepresentation.svelte";
 
 
+// Function to generate .dot file for viewing tree in Graphviz
 export function generateGraphviz(tree: Node){
     if (tree == null) {
       throw new Error('There is no tree to export');  
@@ -12,6 +13,7 @@ export function generateGraphviz(tree: Node){
     const Tree = new gr.Subgraph('Tree');
     G.addSubgraph(Tree);
     
+    // Function to add all nodes in .dot file
     function addAllNodes(tree: Node) {
       const curNode = new gr.Node(tree.type.toString() + '\n' + extractValue(tree), {
         //[gr.attribute.color]: 'black'

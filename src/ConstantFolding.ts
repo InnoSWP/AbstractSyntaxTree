@@ -6,6 +6,7 @@ import { extractChildren } from "./Estree/estreeUtils"
 type transactionDescription = { from: number, to: number, replaceWith: string }
 type foldResponse = { hasFoldedCompletely: boolean, descriptions: transactionDescription[] }
 
+// Function to fold constants recursively
 export function recursivelyFoldConstants(node: Node): foldResponse {
     if (node.type == "Literal") {
         return { hasFoldedCompletely: true, descriptions: [{ from: node.range[0], to: node.range[1], replaceWith: node.raw }] }
