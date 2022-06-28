@@ -160,13 +160,13 @@ function fmap (n: Node, f: (Node) => Node): void {
       return
     case 'ClassExpression':
     case 'ClassDeclaration':
-      if (n.id != null){
+      if (n.id != null) {
         [n.id] = operate([n.id])
       }
       if (n.superClass != null) {
         [n.superClass] = operate([n.superClass])
       }
-      [ n.body] = operate([ n.body])
+      [n.body] = operate([n.body])
       return
     case 'ExportSpecifier':
       [n.exported, n.local] = operate([n.exported, n.local])

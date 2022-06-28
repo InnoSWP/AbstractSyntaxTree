@@ -3,7 +3,7 @@
   "include": ["src/**/*","spec/**/*","src"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
   "compilerOptions": {
-    "strictNullChecks": true,
+    "strictNullChecks": false,
     "types": ["mocha","svelte"],
     "rootDirs": [
       "src",
