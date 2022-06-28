@@ -1,4 +1,4 @@
-import { recursivelyFoldConstants } from '../src/ConstantFolding'
+import { recursivelyFoldConstants } from '../src/constantFolding'
 import assert from "assert";
 
 import { parseModule } from "esprima";
