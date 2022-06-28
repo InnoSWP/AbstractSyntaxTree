@@ -164,9 +164,10 @@ function fmap(n: Node, f: (Node) => Node): Node {
         case 'ThisExpression':
             return;
         case 'ClassExpression':
-            [n.body] = operate([n.body])
-            return;
         case 'ClassDeclaration':
+            if (n.superClass != null) {
+                [n.superClass] = operate([n.superClass])
+            }
             [n.id, n.body] = operate([n.id, n.body])
             return;
         case 'ExportSpecifier':

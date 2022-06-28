@@ -3,5 +3,11 @@
 
   "include": ["src/**/*","spec/**/*"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
-  "compilerOptions": {"types": ["mocha","svelte"]}
+  "compilerOptions": {
+    "types": ["mocha","svelte"],
+    "rootDirs": [
+      "src",
+      "spec"
+    ]
+  }
 }
