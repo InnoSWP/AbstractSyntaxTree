@@ -1,12 +1,12 @@
-import { extractChildren, setChildren } from '../src/Estree/estreeUtils';
+import { extractChildren, setChildren } from '../src/Estree/estreeUtils'
 import type { Node } from '../src/Estree/estreeExtension'
 import type { Literal } from 'estree'
-import assert, { deepEqual } from "assert";
+import assert, { deepEqual } from 'assert'
 
-import { parseModule, Program } from "esprima";
-import { compressBinaryExpressionsInTree } from '../src/Estree/binaryExpressionCompressor';
+import { parseModule, Program } from 'esprima'
+import { compressBinaryExpressionsInTree } from '../src/Estree/binaryExpressionCompressor'
 
-let complexCode = `
+const complexCode = `
 import {s} from './l'
 export function p(s2,l=2){
   
@@ -56,59 +56,55 @@ export { variable1 as name1, variable2 as default, nameN };
 
 `
 
-function recursivelySetChildren(node: Node, f: (Node) => Node) {
-  let children = extractChildren(node)
+function recursivelySetChildren (node: Node, f: (Node) => Node) {
+  const children = extractChildren(node)
   children.forEach(child => {
-    recursivelySetChildren(child, f);
+    recursivelySetChildren(child, f)
   })
   setChildren(node, children.map(f))
 }
 
-describe("Children extraction", () => {
-  it("cancels out with children setting", async function () {
-    let incrediblyComplexTree = compressBinaryExpressionsInTree(parseModule(complexCode, { range: true }))
+describe('Children extraction', () => {
+  it('cancels out with children setting', async function () {
+    const incrediblyComplexTree = compressBinaryExpressionsInTree(parseModule(complexCode, { range: true }))
 
-    let initialTree = JSON.parse(JSON.stringify(incrediblyComplexTree))
+    const initialTree = JSON.parse(JSON.stringify(incrediblyComplexTree))
     recursivelySetChildren(incrediblyComplexTree, (node) => node)
-    let recursivelyResetTree = incrediblyComplexTree;
+    const recursivelyResetTree = incrediblyComplexTree
     deepEqual(initialTree, recursivelyResetTree)
-  });
+  })
 
-  it("gives all information about simple expressions", async function () {
-    let exampleTree = compressBinaryExpressionsInTree(parseModule("function p(s,d){console.log(s)}", { range: true })) as Program
+  it('gives all information about simple expressions', async function () {
+    const exampleTree = compressBinaryExpressionsInTree(parseModule('function p(s,d){console.log(s)}', { range: true })) as Program
 
-    let functionChildren = extractChildren(exampleTree.body[0])
-    let identifierP = functionChildren.find(node => node.type == "Identifier" && node.name == "p")
-    let identifierS = functionChildren.find(node => node.type == "Identifier" && node.name == "s")
-    let identifierD = functionChildren.find(node => node.type == "Identifier" && node.name == "d")
-    let functionBody = functionChildren.find(node => node.type == "BlockStatement")
-
+    const functionChildren = extractChildren(exampleTree.body[0])
+    const identifierP = functionChildren.find(node => node.type == 'Identifier' && node.name == 'p')
+    const identifierS = functionChildren.find(node => node.type == 'Identifier' && node.name == 's')
+    const identifierD = functionChildren.find(node => node.type == 'Identifier' && node.name == 'd')
+    const functionBody = functionChildren.find(node => node.type == 'BlockStatement')
 
     assert(identifierD != null && identifierP != null && identifierS != null && functionBody != null && functionChildren.length == 4)
-  });
-
+  })
 })
 
-describe("Children setting", () => {
-  it("changes information about simple expressions", async function () {
-    let exampleTree = compressBinaryExpressionsInTree(parseModule("2", { range: true })) as Program
+describe('Children setting', () => {
+  it('changes information about simple expressions', async function () {
+    const exampleTree = compressBinaryExpressionsInTree(parseModule('2', { range: true })) as Program
 
-    let literalStatement = exampleTree.body[0]
+    const literalStatement = exampleTree.body[0]
 
-
-    let initialLiteral = extractChildren(literalStatement)
-      .find(node => node.type == "Literal" && node.value == 2) as Literal;
-    let changedLiteral = JSON.parse(JSON.stringify(initialLiteral)) as Literal
+    const initialLiteral = extractChildren(literalStatement)
+      .find(node => node.type == 'Literal' && node.value == 2) as Literal
+    const changedLiteral = JSON.parse(JSON.stringify(initialLiteral)) as Literal
     changedLiteral.value = 23
     changedLiteral.raw = '23'
     changedLiteral.range = [0, 2]
 
     setChildren(literalStatement, [changedLiteral])
 
-    let newLiteral = extractChildren(literalStatement)
-      .find(node => node.type == "Literal") as Literal;
+    const newLiteral = extractChildren(literalStatement)
+      .find(node => node.type == 'Literal') as Literal
 
     deepEqual(changedLiteral, newLiteral)
-
-  });
+  })
 })

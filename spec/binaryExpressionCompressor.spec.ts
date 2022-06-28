@@ -1,100 +1,92 @@
 import { compressBinaryExpressionsInTree } from '../src/Estree/binaryExpressionCompressor'
-import assert from "assert";
+import assert from 'assert'
 
 import { extractChildren } from '../src/Estree/estreeUtils.js'
-import { parseModule } from "esprima";
-import type { CompressedBinaryExpression, CompressedLogicalExpression, Node } from '../src/Estree/estreeExtension';
+import { parseModule } from 'esprima'
+import type { CompressedBinaryExpression, CompressedLogicalExpression, Node } from '../src/Estree/estreeExtension'
 
-
-function collectAllCompressedExpressions(node: Node): (CompressedBinaryExpression | CompressedLogicalExpression)[] {
-    let children: Node[] = extractChildren(node)
-    let collectedCompressedExpressions = [].concat(...children.map(child => collectAllCompressedExpressions(child)))
-    if (node.type == "CompressedBinaryExpression" || node.type == "CompressedLogicalExpression") {
-        collectedCompressedExpressions = collectedCompressedExpressions.concat(node)
-    }
-    return collectedCompressedExpressions
+function collectAllCompressedExpressions (node: Node): Array<CompressedBinaryExpression | CompressedLogicalExpression> {
+  const children: Node[] = extractChildren(node)
+  let collectedCompressedExpressions = [].concat(...children.map(child => collectAllCompressedExpressions(child)))
+  if (node.type == 'CompressedBinaryExpression' || node.type == 'CompressedLogicalExpression') {
+    collectedCompressedExpressions = collectedCompressedExpressions.concat(node)
+  }
+  return collectedCompressedExpressions
 }
 
-describe("Expression compressor", () => {
+describe('Expression compressor', () => {
+  it('compresses binary expressions', async function () {
+    const initialTree = parseModule('console.log(3+3+3)', { range: true })
+    const compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
 
-    it("compresses binary expressions", async function () {
+    const hasOnlyOneCompressedExpression = compressedExpressions.length == 1
+    assert(hasOnlyOneCompressedExpression)
 
-        let initialTree = parseModule("console.log(3+3+3)", { range: true })
-        let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
+    const onlyExpression = compressedExpressions[0]
 
-        let hasOnlyOneCompressedExpression = compressedExpressions.length == 1;
-        assert(hasOnlyOneCompressedExpression)
+    const expressionConsistsOfThreeLiterals = onlyExpression.operands.length == 3
+    const isAddition = onlyExpression.operator == '+'
+    const isBinaryExpression = onlyExpression.type == 'CompressedBinaryExpression'
+    assert(expressionConsistsOfThreeLiterals && isAddition && isBinaryExpression)
+  })
 
-        let onlyExpression = compressedExpressions[0]
+  it('compresses logical expressions', async function () {
+    const initialTree = parseModule('console.log(true && true && false)', { range: true })
+    const compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
 
-        let expressionConsistsOfThreeLiterals = onlyExpression.operands.length == 3;
-        let isAddition = onlyExpression.operator == '+';
-        let isBinaryExpression = onlyExpression.type == "CompressedBinaryExpression";
-        assert(expressionConsistsOfThreeLiterals && isAddition && isBinaryExpression)
-    });
+    const hasOnlyOneCompressedExpression = compressedExpressions.length == 1
+    assert(hasOnlyOneCompressedExpression)
 
-    it("compresses logical expressions", async function () {
+    const onlyExpression = compressedExpressions[0]
 
-        let initialTree = parseModule("console.log(true && true && false)", { range: true })
-        let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
+    const expressionConsistsOfThreeLiterals = onlyExpression.operands.length == 3
+    const isAnd = onlyExpression.operator == '&&'
+    const isLogicalExpression = onlyExpression.type == 'CompressedLogicalExpression'
+    assert(expressionConsistsOfThreeLiterals && isAnd && isLogicalExpression)
+  })
 
-        let hasOnlyOneCompressedExpression = compressedExpressions.length == 1;
-        assert(hasOnlyOneCompressedExpression)
+  it('compresses all associative operations', async function () {
+    for (const operator of ['+', '&', '&&', '|', '||', '^', '*']) {
+      const initialTree = parseModule(`console.log(a ${operator} b ${operator} c)`, { range: true })
+      const compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
 
-        let onlyExpression = compressedExpressions[0]
+      const hasOnlyOneCompressedExpression = compressedExpressions.length == 1
+      assert(hasOnlyOneCompressedExpression)
 
-        let expressionConsistsOfThreeLiterals = onlyExpression.operands.length == 3;
-        let isAnd = onlyExpression.operator == '&&';
-        let isLogicalExpression = onlyExpression.type == "CompressedLogicalExpression";
-        assert(expressionConsistsOfThreeLiterals && isAnd && isLogicalExpression)
-    });
+      const onlyExpression = compressedExpressions[0]
 
-    it("compresses all associative operations", async function () {
+      const expressionConsistsOfThreeLiterals = onlyExpression.operands.length == 3
+      const isCorrectOperator = onlyExpression.operator == operator
+      assert(expressionConsistsOfThreeLiterals && isCorrectOperator)
+    }
+  })
 
-        for (let operator of ['+', '&', '&&', '|', '||', '^', '*']) {
-            let initialTree = parseModule(`console.log(a ${operator} b ${operator} c)`, { range: true })
-            let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
+  it('does not compress non-associative operations', async function () {
+    for (const operator of ['-', '==', '!=', '/', '%']) {
+      const initialTree = parseModule(`console.log(a ${operator} b ${operator} c)`, { range: true })
+      const compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
 
-            let hasOnlyOneCompressedExpression = compressedExpressions.length == 1;
-            assert(hasOnlyOneCompressedExpression)
+      const doesNotHaveCompressedExpressions = compressedExpressions.length == 0
+      assert(doesNotHaveCompressedExpressions)
+    }
+  })
 
-            let onlyExpression = compressedExpressions[0]
+  it('does not compress incompressable expressions', async function () {
+    const initialTree = parseModule('console.log(arr[index]).func()', { range: true })
+    const compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
 
-            let expressionConsistsOfThreeLiterals = onlyExpression.operands.length == 3;
-            let isCorrectOperator = onlyExpression.operator == operator;
-            assert(expressionConsistsOfThreeLiterals && isCorrectOperator)
-        }
-    });
+    const doesNotHaveCompressedExpressions = compressedExpressions.length == 0
+    assert(doesNotHaveCompressedExpressions)
+  })
 
-    it("does not compress non-associative operations", async function () {
+  it('compresses nested expressions', async function () {
+    const initialTree = parseModule('console.log(3+3+3+(3-3-3*2*3*4))', { range: true })
+    const compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
 
-        for (let operator of ['-', '==', '!=', '/', '%']) {
-            let initialTree = parseModule(`console.log(a ${operator} b ${operator} c)`, { range: true })
-            let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
+    const plusExpression = compressedExpressions.find(expr => expr.operator == '+')
+    assert(plusExpression != null && plusExpression.operands.length == 4)
 
-            let doesNotHaveCompressedExpressions = compressedExpressions.length == 0;
-            assert(doesNotHaveCompressedExpressions)
-        }
-    });
-
-    it("does not compress incompressable expressions", async function () {
-        let initialTree = parseModule(`console.log(arr[index]).func()`, { range: true })
-        let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
-
-        let doesNotHaveCompressedExpressions = compressedExpressions.length == 0;
-        assert(doesNotHaveCompressedExpressions)
-    })
-
-    it("compresses nested expressions", async function () {
-
-        let initialTree = parseModule("console.log(3+3+3+(3-3-3*2*3*4))", { range: true })
-        let compressedExpressions = collectAllCompressedExpressions(compressBinaryExpressionsInTree(initialTree))
-
-        let plusExpression = compressedExpressions.find(expr => expr.operator == "+");
-        assert(plusExpression != null && plusExpression.operands.length == 4)
-
-        let multiplicationExpression = compressedExpressions.find(expr => expr.operator == "*");
-        assert(multiplicationExpression != null && multiplicationExpression.operands.length == 4)
-    });
-
-});
+    const multiplicationExpression = compressedExpressions.find(expr => expr.operator == '*')
+    assert(multiplicationExpression != null && multiplicationExpression.operands.length == 4)
+  })
+})
