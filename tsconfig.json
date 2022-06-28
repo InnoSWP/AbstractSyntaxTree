@@ -1,9 +1,9 @@
 {
   "extends": "@tsconfig/svelte/tsconfig.json",
-
   "include": ["src/**/*","spec/**/*","src"],
   "exclude": ["node_modules/*", "__sapper__/*", "public/*"],
   "compilerOptions": {
+    "strictNullChecks": true,
     "types": ["mocha","svelte"],
     "rootDirs": [
       "src",

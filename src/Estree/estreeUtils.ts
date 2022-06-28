@@ -16,7 +16,7 @@ function exhaustiveMatchingGuard (_: never): never {
   throw new Error('Should not be able to reach here')
 }
 
-function fmap (n: Node, f: (Node) => Node): Node {
+function fmap (n: Node, f: (Node) => Node): void {
   const operate = (nodes: Node[]): any[] => nodes.map(f)
   let operated
   switch (n.type) {
@@ -160,10 +160,13 @@ function fmap (n: Node, f: (Node) => Node): Node {
       return
     case 'ClassExpression':
     case 'ClassDeclaration':
+      if (n.id != null){
+        [n.id] = operate([n.id])
+      }
       if (n.superClass != null) {
         [n.superClass] = operate([n.superClass])
       }
-      [n.id, n.body] = operate([n.id, n.body])
+      [ n.body] = operate([ n.body])
       return
     case 'ExportSpecifier':
       [n.exported, n.local] = operate([n.exported, n.local])
