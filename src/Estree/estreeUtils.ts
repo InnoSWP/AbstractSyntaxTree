@@ -1,6 +1,5 @@
 
 import type { Node } from './estreeExtension'
-import type estree from 'estree'
 
 
 export function setChildren(n: Node, newChildrenInNewType: Node[]) {
