@@ -1,8 +1,8 @@
 <script lang="ts">
     import type { Program, Node } from "estree";
-import { afterUpdate, beforeUpdate } from "svelte";
+import { beforeUpdate } from "svelte";
 import { get } from "svelte/store";
-    import { arrayHighlight, nodeIndex, highlightStates } from "./Stores.svelte";
+    import { arrayHighlight, nodeIndex, highlightStates, storedArrayHighlight } from "./Stores.svelte";
 
     let hfrom: number, hto: number
     let src: string
@@ -65,13 +65,14 @@ import { get } from "svelte/store";
     }
 
     function handleMouseEnter(index: number, [from, to]: [number, number]) {
+        clearHighlight()
         arrayHighlight.set([[from, to], "arr"])
         highlightFromRoot(index)
     }
 
     function handleMouseLeave() {
-        arrayHighlight.set([[0, 0], "arr"])
         clearHighlight()
+        arrayHighlight.set($storedArrayHighlight)
     }
 
     function isChild(ind1: number, ind2: number): boolean {
@@ -94,7 +95,7 @@ import { get } from "svelte/store";
                 maxto = Math.max(maxto, PDR[i][3][1])
             }
         }
-        arrayHighlight.set([[minfrom, maxto], "code"])
+        $arrayHighlight[0] = [minfrom, maxto]
     }
 
     function clearHighlight() {

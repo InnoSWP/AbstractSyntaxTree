@@ -1,7 +1,7 @@
 <script lang="ts">
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
-    import { arrayHighlight , contextMenu, highlightStates, nodeIndex} from "../Stores.svelte";
+    import { arrayHighlight , contextMenu, highlightStates, nodeIndex, storedArrayHighlight } from "../Stores.svelte";
     import type { Node } from 'estree';
 import { get } from "svelte/store";
 
@@ -47,6 +47,7 @@ import { get } from "svelte/store";
     }
 
     function handleMouseEnter() {
+        clearHighlight()
         let range = calculateRange()
         if(range.from == undefined) {
             range.from = 0
@@ -62,8 +63,8 @@ import { get } from "svelte/store";
     }
 
     function handleMouseLeave() {
-        arrayHighlight.set([[0, 0], "tree"])
         clearHighlight()
+        arrayHighlight.set($storedArrayHighlight)
     }
 
     function rightClick(e){
