@@ -4,7 +4,6 @@
     import { slide } from 'svelte/transition';
     import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex, storedArrayHighlight } from "../Stores.svelte";
     import type {  Node } from "../Estree/estreeExtension";
-    import CodeMirror from "../CodeMirror.svelte";
     import { get } from "svelte/store";
 
     export let obj: Node

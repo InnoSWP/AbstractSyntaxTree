@@ -3,7 +3,7 @@
   import CodeMirror from "./CodeMirror.svelte";
   import TreeRepresentation from "./TreeRepresentation.svelte";
   import ArrayRepresentation from "./ArrayRepresentation.svelte";
-  import Stores from "./Stores.svelte";
+  import Stores, { storedArrayHighlight, arrayHighlight } from "./Stores.svelte";
   import Modal from "./Modal.svelte";
   import { Modals, closeModal, openModal} from 'svelte-modals';
   import type { Program } from "esprima";
@@ -23,16 +23,28 @@
   const params = new URLSearchParams(window.location.search)
 
   let doc: string = `console.log(a+b)`
+  let hfrom: number = 0, hto: number = 0;
+
   if(params.has('program')) {
     let decoded: string = decompress(params.get('program'));
     doc = decoded
+  }
+
+  if(params.has('highlight')) {
+    let [from, to] = params.get('highlight').split(',');
+    hfrom = Number(from);
+    hto = Number(to);
+    storedArrayHighlight.set([[hfrom, hto], "code"])
   }
 
   function openShare() {
     let raw: string = view.state.doc.toString();
     let encoded: string = encodeURIComponent(compress(raw));
     console.log(encoded);
-    let url: string = new URL(`?program=${encoded}`, window.location.href).toString();
+
+    let highlightParams = $arrayHighlight[0][0].toString() + ',' + $arrayHighlight[0][1].toString(); 
+
+    let url: string = new URL(`?program=${encoded}&highlight=${highlightParams}`, window.location.href).toString();
     openModal(Modal, {
       "title": "Share this code with others!",
       "link": url,
