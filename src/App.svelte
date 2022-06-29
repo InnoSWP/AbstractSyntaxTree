@@ -3,7 +3,7 @@
   import CodeMirror from "./CodeMirror.svelte";
   import TreeRepresentation from "./TreeRepresentation.svelte";
   import ArrayRepresentation from "./ArrayRepresentation.svelte";
-  import Stores, { storedArrayHighlight, arrayHighlight } from "./Stores.svelte";
+  import Stores, { storedArrayHighlight, arrayHighlight, view } from "./Stores.svelte";
   import Modal from "./Modal.svelte";
   import { Modals, closeModal, openModal} from 'svelte-modals';
   import type { Program } from "esprima";
@@ -16,9 +16,7 @@
   import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
   import { saveAs } from 'file-saver';
 
-  let view: EditorView = null
   let tree: Program
-  $: _view = view
 
   const params = new URLSearchParams(window.location.search)
 
@@ -38,7 +36,7 @@
   }
 
   function openShare() {
-    let raw: string = view.state.doc.toString();
+    let raw: string = $view.state.doc.toString();
     let encoded: string = encodeURIComponent(compress(raw));
     console.log(encoded);
 
@@ -65,13 +63,6 @@
   
 </script>
 
-<script lang="ts" context="module">
-
-  export let _view: EditorView = null
-
-
-</script>
-
 <Tailwind />
 <Stores />
 <MarkerPlugin />
@@ -82,7 +73,7 @@
 
 <div class="h-screen flex items-stretch">
   <div class="h-screen w-4/12 flex code-container">
-      <CodeMirror bind:view bind:tree bind:doc />
+      <CodeMirror bind:tree bind:doc />
 
       <div class="absolute bottom-0 bg-treebg w-4/12">
         <button on:click={openShare} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 m-2 rounded">

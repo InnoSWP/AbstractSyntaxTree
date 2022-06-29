@@ -9,8 +9,9 @@
     import { arrayHighlight, constantFolding } from "./Stores.svelte";
     import type { Node } from "./Estree/estreeExtension";
     import { extractChildren } from "./Estree/estreeUtils";
-    import { _view } from "./App.svelte";
+    import { view } from "./Stores.svelte";
     import { recursivelyFoldConstants } from "./ConstantFolding";
+import { get } from "svelte/store";
 
     constantFolding.subscribe((nodeToFold) => {
         if (nodeToFold == null) {
@@ -23,7 +24,7 @@
                 return { changes: { from: from, to: to, insert: replaceWith } };
             }
         );
-        _view.dispatch(_view.state.update(...transactionSpecs));
+        get(view).dispatch(get(view).state.update(...transactionSpecs));
         constantFolding.set(null);
     });
 </script>

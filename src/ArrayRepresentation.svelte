@@ -74,6 +74,7 @@
     }
 
     function handleMouseEnter(index: number, [from, to]: [number, number]) {
+        console.log($arrayHighlight)
         clearHighlight()
         arrayHighlight.set([[from, to], "arr"])
         highlightFromRoot(index)

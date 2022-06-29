@@ -8,16 +8,17 @@
     import type {  CompressedBinaryExpression, Node } from "./Estree/estreeExtension";
     import { compressBinaryExpression, compressBinaryExpressionsInTree } from './Estree/binaryExpressionCompressor';
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
-    import { arrayHighlight, storedArrayHighlight } from './Stores.svelte';
+    import { arrayHighlight, storedArrayHighlight, view } from './Stores.svelte';
     import { linter } from '@codemirror/lint'
     import Linter from "eslint4b-prebuilt";
 
     onMount(() => {
         createEditor()
-        tree = parseModule(view.state.doc.toString(), { range: true })
+        tree = parseModule($view.state.doc.toString(), { range: true })
         tree = compressBinaryExpressionsInTree(tree)
+        $arrayHighlight = $storedArrayHighlight
     })
-    export let view: EditorView = null
+
     export let doc: string = ""
     $: [[hfrom, hto], src] = $arrayHighlight
 
@@ -27,7 +28,7 @@
     function updateHandle(v: ViewUpdate): void {
         if(v.docChanged) {
             try {
-                tree = parseModule(view.state.doc.toString(), { range: true })
+                tree = parseModule($view.state.doc.toString(), { range: true })
                 tree = compressBinaryExpressionsInTree(tree)
             } catch {}
         }
@@ -38,7 +39,7 @@
     }
 
     function createEditor(): void {
-        view = new EditorView({
+        $view = new EditorView({
             state: EditorState.create({
                 extensions: [
                     linter(esLint(new Linter())),

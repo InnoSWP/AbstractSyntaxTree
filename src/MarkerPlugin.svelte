@@ -1,8 +1,9 @@
 <script lang="ts" context="module">
     import { TransactionSpec, StateEffect, StateField, RangeSet, EditorState, Transaction, RangeSetBuilder } from '@codemirror/state';
     import { Decoration, DecorationSet, ViewPlugin, ViewUpdate, EditorView } from '@codemirror/view';
+import { get } from 'svelte/store';
     import { arrayHighlight } from './Stores.svelte';
-    import { _view } from './App.svelte'
+    import { view } from './Stores.svelte'
 
     export {}
 
@@ -14,7 +15,7 @@
         },
         update: function(value: DecorationSet, transaction: Transaction) {
             let dec = Decoration.mark({
-                class: "highlightedRoot"
+                class: "highlighted"
             })
             if(transaction.effects.length == 0) {
                 return value;
@@ -46,7 +47,7 @@
         let spec: TransactionSpec = {
         effects: [eff],
         }
-        _view.dispatch(spec)
+        get(view).dispatch(spec)
     })
 
     export const markerPlugin = ViewPlugin.fromClass(class {
