@@ -91,9 +91,9 @@ function fmap (n: Node, f: (Node) => Node): void {
         [...n.params] = operated
         return
       }
-      operated = operate([n.id, ...n.params, n.body])
+      operated = operate([...n.params, n.body])
       n.body = extractLastChild(operated);
-      [n.id, ...n.params] = operated
+      [...n.params] = operated
       return
     case 'VariableDeclaration':
       n.declarations = operate(n.declarations)
