@@ -1,7 +1,7 @@
 import { extractChildren, setChildren } from '../src/Estree/estreeUtils'
 import type { Node } from '../src/Estree/estreeExtension'
 import type { Literal } from 'estree'
-import assert, { deepEqual } from 'assert'
+import assert, { deepEqual, deepStrictEqual } from 'assert'
 
 import { parseModule, Program } from 'esprima'
 import { compressBinaryExpressionsInTree } from '../src/Estree/binaryExpressionCompressor'
@@ -77,7 +77,9 @@ describe('Children extraction', () => {
   it('gives all information about simple expressions', async function () {
     const exampleTree = compressBinaryExpressionsInTree(parseModule('function p(s,d){console.log(s)}', { range: true })) as Program
 
+
     const functionChildren = extractChildren(exampleTree.body[0])
+    
     const identifierP = functionChildren.find(node => node.type == 'Identifier' && node.name == 'p')
     const identifierS = functionChildren.find(node => node.type == 'Identifier' && node.name == 's')
     const identifierD = functionChildren.find(node => node.type == 'Identifier' && node.name == 'd')
