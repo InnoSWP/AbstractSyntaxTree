@@ -10,9 +10,11 @@
   import type { EditorView } from '@codemirror/view';
   import MarkerPlugin from "./MarkerPlugin.svelte";
   import Menu from "./CustomContextMenu/Menu.svelte";
-  import {contextMenu} from "./Stores.svelte";
+  import { contextMenu } from "./Stores.svelte";
   import { compress, decompress } from 'lzw-compressor';
-import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
+  import { generateGraphviz } from "./Tree/treeExport"
+  import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
+  import { saveAs } from 'file-saver';
 
   let view: EditorView = null
   let tree: Program
@@ -36,14 +38,19 @@ import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
       "link": url,
     })
   }
-
+  
   function closeContextMenu() {
     contextMenu.set([[],{x:0,y:0}])
   }
 
-
   let contextMenuOptions: {title:string,callback: () => void}[], contextMenuPosition:{x:number,y:number}
   $: [contextMenuOptions, contextMenuPosition] = $contextMenu
+  
+    async function Download(tree: Program) {
+      var blob = new Blob([generateGraphviz(tree)], {type: "text/plain;charset=utf-8"});
+      saveAs(blob, "AST.dot");
+    }
+  
 </script>
 
 <script lang="ts" context="module">
@@ -69,9 +76,12 @@ import ConstantFolderPlugin from "./ConstantFolderPlugin.svelte";
         <button on:click={openShare} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 m-2 rounded">
           Share
         </button>
+        <button on:click={() => Download(tree)} class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-1 px-1 m-2 rounded">
+          Export
+        </button>
       </div>
   </div>
-  
+
   <div class="h-screen w-4/12 bg-treebg">
      <TreeRepresentation bind:tree />
   </div>

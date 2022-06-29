@@ -1,7 +1,11 @@
 <script lang="ts">
-    import type { Program, Node } from "estree";
-import { beforeUpdate } from "svelte";
-import { get } from "svelte/store";
+    import type {Program} from 'esprima';
+    import type {Node} from './Estree/estreeExtension'
+    import { extractChildren } from './Estree/estreeUtils';
+
+    import { beforeUpdate } from "svelte";
+    import { get } from "svelte/store";
+    import type {Pattern} from 'estree'
     import { arrayHighlight, nodeIndex, highlightStates, storedArrayHighlight } from "./Stores.svelte";
 
     let hfrom: number, hto: number
@@ -14,6 +18,8 @@ import { get } from "svelte/store";
     function inOrderTraversal(tree: Program): [number, string, string, [number, number]][] {
         type entry = [number, string, string, [number, number]]
         let index: number = 0
+        $nodeIndex.clear()
+        $highlightStates.length = 0
 
         function aux(n: Node, depth: number, current: entry[]): entry[] {
             if(n == null) {
@@ -23,7 +29,10 @@ import { get } from "svelte/store";
             $highlightStates[index] = ""
             index++
 
-            let value = extractValue(n);
+            let value = "";
+            if (n.type != "CallExpression" && n.type != "MemberExpression") {
+                value = extractValue(n);
+            }
             current.push([depth, n.type, value, n.range]);
             for(let child of extractChildren(n)) {
                 current.concat(aux(child, depth+1, current));
@@ -80,11 +89,11 @@ import { get } from "svelte/store";
             return false
         for (let i = 4; i < PDR[ind1].length && PDR[ind1][i] > 0; i++) {
             if (PDR[ind1][i] != PDR[ind2][i])
-                return false    
+                return false
         }
         return true
     }
-    
+
     function highlightFromRoot(index: number) {
         $highlightStates[index] = "highlightedRoot"
         let minfrom = PDR[index][3][0], maxto = PDR[index][3][1]
@@ -99,8 +108,9 @@ import { get } from "svelte/store";
     }
 
     function clearHighlight() {
-        for (let i = 0; i < get(highlightStates).length; i++)
+        for (let i = 0; i < get(highlightStates).length; i++){
             $highlightStates[i] = ""
+        }
     }
  
     beforeUpdate(()=>{
@@ -170,7 +180,7 @@ import { get } from "svelte/store";
 </style>
 
 <script lang="ts" context="module">
-    function extractValue(n: Node): string {
+    export function extractValue(n: Node): string {
         if(n == null) {
             return "";
         }
@@ -205,6 +215,15 @@ import { get } from "svelte/store";
             case 'ForInStatement':
                 return extractValue(n.right);
             case 'FunctionDeclaration':
+                let result = [];
+                n.params.forEach((par) => {
+                    result.push(extractValuesFromPattern(par));
+                });
+                let ans = "";
+                result.forEach((e) => {
+                    ans += e + ", ";
+                });
+                return `${extractValue(n.id)}(${ans.substring(0, ans.length - 2)})`;
             case 'VariableDeclarator':
                 return extractValue(n.id);
             case 'Property':
@@ -213,6 +232,8 @@ import { get } from "svelte/store";
             case 'UpdateExpression':
             case 'BinaryExpression':
             case 'AssignmentExpression':
+            case 'CompressedBinaryExpression':
+            case 'CompressedLogicalExpression':
             case 'LogicalExpression':
                 return n.operator;
             case 'CallExpression':
@@ -238,76 +259,30 @@ import { get } from "svelte/store";
         }
     }
 
-    export function extractChildren(n: Node): (Node | null)[] {
-        switch(n.type) {
-            case 'BlockStatement':
-            case 'Program':
-                return n.body;
-            case 'ExpressionStatement':
-                return [n.expression];
-            case 'WithStatement':
-                return [n.object, n.body];
-            case 'ThrowStatement':
-            case 'ReturnStatement':
-                return [n.argument];
-            case 'LabeledStatement':
-                return [n.label, n.body];
-            case 'BreakStatement':
-                return [];
-            case 'ContinueStatement':
-                return [n.label];
-            case 'IfStatement':
-                return [n.test, n.consequent, n.alternate]
-            case 'SwitchStatement':
-                return [n.discriminant, ...n.cases];
-            case 'SwitchCase':
-                return [n.test, ...n.consequent];
-            case 'TryStatement':
-                return [n.block, n.handler, n.finalizer];
-            case 'CatchClause':
-                return [n.param, n.body];
-            case 'WhileStatement':
-            case  'DoWhileStatement':
-                return [n.test, n.body];
-            case 'ForStatement':
-                return [n.init, n.test, n.update, n.body];
-            case 'ForOfStatement':
-            case 'ForInStatement':
-                return [n.left, n.right, n.body];
-            case 'FunctionDeclaration':
-                return [n.id, ...n.params, n.body];
-            case 'VariableDeclaration':
-                return n.declarations;
-            case 'VariableDeclarator':
-                return [n.id, n.init];
-            case 'ArrayExpression':
-                return n.elements;
-            case 'ObjectExpression':
-                return n.properties;
-            case 'Property':
-                return [n.key, n.value];
-            case 'FunctionExpression':
-                return [n.id, ...n.params, n.body];
-            case 'ArrowFunctionExpression':
-                return [...n.params, n.body];
-            case 'UnaryExpression':
-            case 'UpdateExpression':
-                return [n.argument];
-            case 'BinaryExpression':
-            case 'AssignmentExpression':
-            case 'LogicalExpression':
-                return [n.left, n.right];
-            case 'MemberExpression':
-                return [n.object, n.property];
-            case 'ConditionalExpression':
-                return [n.test, n.consequent, n.alternate];
-            case 'CallExpression':
-            case 'NewExpression':
-                return [n.callee, ...n.arguments];
-            case 'SequenceExpression':
-                return n.expressions;
-        }
 
-        return [];
+    function extractValuesFromPattern(pattern: Pattern) {
+        switch (pattern.type) {
+            case "Identifier":
+                return [pattern.name];
+            case "ObjectPattern":
+                let answer = [];
+                for (let i = 0; i < pattern.properties.length; i++) {
+                    answer.push(extractValuesFromPattern(pattern.properties[i].value));
+                }
+                return answer;
+            case "ArrayPattern":
+                let ans = [];
+                for (let i = 0; i < pattern.elements.length; i++) {
+                    ans.push(extractValuesFromPattern(pattern.elements[i]));
+                }
+                return ans;
+            case "AssignmentPattern":
+                return extractValuesFromPattern(pattern.left);
+            case "RestElement":
+                return extractValuesFromPattern(pattern.argument);
+            case "MemberExpression":
+                return [extractValue(pattern.property)];
+        }
     }
+
 </script>

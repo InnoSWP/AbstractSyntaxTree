@@ -2,11 +2,11 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
-    import type { Node } from 'estree';
     import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex, storedArrayHighlight } from "../Stores.svelte";
+    import type {  Node } from "../Estree/estreeExtension";
     import CodeMirror from "../CodeMirror.svelte";
-import { get } from "svelte/store";
-    
+    import { get } from "svelte/store";
+
     export let obj: Node
     export let expanded = true
     export let key: string = ""
@@ -52,8 +52,9 @@ import { get } from "svelte/store";
     }
 
     function clearHighlight() {
-        for (let i = 0; i < get(highlightStates).length; i++)
+        for (let i = 0; i < get(highlightStates).length; i++){
             $highlightStates[i] = ""
+        }
     }
 
     function getFoldConstantsFunction():null|(()=>void){
