@@ -1,7 +1,7 @@
 <script lang="ts">
     import TreeObject from "./TreeObject.svelte";
     import { slide } from 'svelte/transition';
-    import { arrayHighlight , contextMenu, highlightStates, nodeIndex} from "../Stores.svelte";
+    import { arrayHighlight , contextMenu, highlightStates, nodeIndex, storedArrayHighlight } from "../Stores.svelte";
     import type { Node } from '../Estree/estreeExtension';
     import { get } from "svelte/store";
 
@@ -51,6 +51,7 @@
 
     // Function to hangle mouse position when it enter tree array zone
     function handleMouseEnter() {
+        clearHighlight()
         let range = calculateRange()
         if(range.from == undefined) {
             range.from = 0
@@ -69,8 +70,8 @@
 
     // Function to hangle mouse position when it leave tree array zone
     function handleMouseLeave() {
-        arrayHighlight.set([[0, 0], "tree"])
         clearHighlight()
+        arrayHighlight.set($storedArrayHighlight)
     }
 
     // Function to handle click RMB on array tree zone

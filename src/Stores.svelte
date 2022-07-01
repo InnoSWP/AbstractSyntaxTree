@@ -4,9 +4,12 @@ import { highlightingFor } from "@codemirror/language";
 
     import { writable } from "svelte/store";
 
-    type highlightInfo = [[number, number], "arr"|"tree"]
-    export const arrayHighlight = writable([[-1, -1], "tree"] as highlightInfo);
+    type highlightInfo = [[number, number], "arr"|"tree"|"code"]
+    export const arrayHighlight = writable([[-1, -1], "code"] as highlightInfo);
     arrayHighlight.subscribe(()=>{})
+
+    export const storedArrayHighlight = writable([[0, 0], "code"] as highlightInfo);
+    storedArrayHighlight.subscribe(()=>{})
 
     type highlightState = "" | "highlighted" | "highlightedRoot"
     export const highlightStates = writable([] as highlightState[])

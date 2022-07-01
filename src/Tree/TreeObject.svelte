@@ -2,8 +2,8 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
+    import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex, storedArrayHighlight } from "../Stores.svelte";
     import type {  Node } from "../Estree/estreeExtension";
-    import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex } from "../Stores.svelte";
     import CodeMirror from "../CodeMirror.svelte";
     import { get } from "svelte/store";
 
@@ -44,14 +44,15 @@
 
     // Function to hangle mouse position when it enter tree object zone
     function handleMouseEnter() {
+        clearHighlight()
         arrayHighlight.set([[from, to], "tree"])
         $highlightStates[$nodeIndex.get(obj)] = "highlightedRoot"
     }
 
     // Function to hangle mouse position when it leave tree object zone
     function handleMouseLeave() {
-        arrayHighlight.set([[0, 0], "tree"])
         clearHighlight()
+        arrayHighlight.set($storedArrayHighlight)
     }
 
     // Function to clear hithlight from tree object 
