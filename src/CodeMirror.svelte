@@ -8,6 +8,7 @@
     import type {  CompressedBinaryExpression, Node } from "./Estree/estreeExtension";
     import { compressBinaryExpression, compressBinaryExpressionsInTree } from './Estree/binaryExpressionCompressor';
     import { markerField, markerPlugin } from './MarkerPlugin.svelte'
+    import { arrayHighlight, storedArrayHighlight } from './Stores.svelte';
     import { linter } from '@codemirror/lint'
     import Linter from "eslint4b-prebuilt";
 
@@ -18,6 +19,7 @@
     })
     export let view: EditorView = null
     export let doc: string = ""
+    $: [[hfrom, hto], src] = $arrayHighlight
 
     let root
     export let tree: Node = null
@@ -28,6 +30,10 @@
                 tree = parseModule(view.state.doc.toString(), { range: true })
                 tree = compressBinaryExpressionsInTree(tree)
             } catch {}
+        }
+        if (v.selectionSet) {
+            arrayHighlight.set([[v.state.selection.main.from, v.state.selection.main.to], "code"])
+            storedArrayHighlight.set($arrayHighlight)
         }
     }
 
@@ -49,6 +55,8 @@
             parent: root,
         })
     }
+
+
 
 </script>
 
