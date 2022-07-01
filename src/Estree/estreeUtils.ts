@@ -1,6 +1,7 @@
 
 import type { Node } from './estreeExtension'
 
+// Function to set children for current node
 export function setChildren (n: Node, newChildrenInNewType: Node[]): void {
   const newChildren = newChildrenInNewType as any[]
   fmap(n, (_childNode) => {
@@ -8,6 +9,7 @@ export function setChildren (n: Node, newChildrenInNewType: Node[]): void {
   })
 }
 
+// Function to extract last children
 function extractLastChild (arr: any[]): any {
   return arr.splice(arr.length - 1, 1)[0]
 }
@@ -208,6 +210,7 @@ function fmap (n: Node, f: (Node) => Node): void {
   }
 }
 
+// Function to extract children from node
 export function extractChildren (n: Node): Node[] {
   let extractedChildren: Node[] = []
   fmap(n, (childNode) => {

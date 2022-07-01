@@ -24,6 +24,7 @@
     let root
     export let tree: Node = null
 
+    // Function to update handle
     function updateHandle(v: ViewUpdate): void {
         if(v.docChanged) {
             try {
@@ -37,6 +38,7 @@
         }
     }
 
+    // Function for creating code editor for user
     function createEditor(): void {
         view = new EditorView({
             state: EditorState.create({
