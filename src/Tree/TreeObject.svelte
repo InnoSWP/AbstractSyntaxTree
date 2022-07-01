@@ -2,8 +2,8 @@
     import TreePrimitive from "./TreePrimitive.svelte";
     import TreeArray from "./TreeArray.svelte";
     import { slide } from 'svelte/transition';
+    import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex, storedArrayHighlight } from "../Stores.svelte";
     import type {  Node } from "../Estree/estreeExtension";
-    import {contextMenu, arrayHighlight, constantFolding, highlightStates, nodeIndex } from "../Stores.svelte";
     import CodeMirror from "../CodeMirror.svelte";
     import { get } from "svelte/store";
 
@@ -41,13 +41,14 @@
     }
 
     function handleMouseEnter() {
+        clearHighlight()
         arrayHighlight.set([[from, to], "tree"])
         $highlightStates[$nodeIndex.get(obj)] = "highlightedRoot"
     }
 
     function handleMouseLeave() {
-        arrayHighlight.set([[0, 0], "tree"])
         clearHighlight()
+        arrayHighlight.set($storedArrayHighlight)
     }
 
     function clearHighlight() {
