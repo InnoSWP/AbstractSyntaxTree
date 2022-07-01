@@ -10,7 +10,7 @@
     import type { Node } from "./Estree/estreeExtension";
     import { extractChildren } from "./Estree/estreeUtils";
     import { _view } from "./App.svelte";
-    import { recursivelyFoldConstants } from "./ConstantFolding";
+    import { recursivelyFoldConstants } from "./constantFolding";
 
     constantFolding.subscribe((nodeToFold) => {
         if (nodeToFold == null) {

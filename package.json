@@ -7,7 +7,7 @@
     "dev": "rollup -c -w --environment dir:public",
     "start": "sirv public -p 8080",
     "validate": "svelte-check",
-    "test": "npx nyc --reporter=text mocha"
+    "test": "scripty && npx nyc --reporter=text mocha"
   },
   "devDependencies": {
     "@codemirror/basic-setup": "^0.20.0",
@@ -23,8 +23,10 @@
     "@types/file-saver": "^2.0.5",
     "@types/node": "^18.0.0",
     "@types/wicg-file-system-access": "^2020.9.5",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.30.0",
     "autoprefixer": "^10.2.3",
-    "eslint": "^8.18.0",
+    "eslint": "^7.32.0",
     "eslint-plugin-fp": "^2.3.0",
     "eslint-plugin-promise": "^6.0.0",
     "lzw-compressor": "^21.6.5",
@@ -69,7 +71,8 @@
     "sirv-cli": "^1.0.0",
     "source-map-support": "^0.5.21",
     "svelte-modals": "^1.1.0",
-    "ts-graphviz": "^0.16.0"
+    "ts-graphviz": "^0.16.0",
+    "ts-standard": "^11.0.0"
   },
   "resolutions": {
     "@codemirror/state": "0.20.1"

@@ -1,19 +1,18 @@
-const { tailwindExtractor } = require("tailwindcss/lib/lib/purgeUnusedStyles");
-const colors = require('tailwindcss/colors');
-const { createCompilerHost } = require("typescript");
+const { tailwindExtractor } = require('tailwindcss/lib/lib/purgeUnusedStyles')
+const colors = require('tailwindcss/colors')
 
 module.exports = {
   purge: {
-    content: ["src/**/*.svelte", "public/index.html"],
+    content: ['src/**/*.svelte', 'public/index.html'],
     options: {
       defaultExtractor: (content) => [
         ...tailwindExtractor(content),
         ...[...content.matchAll(/(?:class:)*([\w\d-/:%.]+)/gm)].map(
           ([_match, group, ..._rest]) => group
-        ),
+        )
       ],
-      keyframes: true,
-    },
+      keyframes: true
+    }
   },
   darkMode: 'class', // or 'media' or 'class'
   theme: {
@@ -29,12 +28,12 @@ module.exports = {
       identifier: '#00f',
       literal: '#164',
       keyword: '#708',
-      treebg: '#efefef',
+      treebg: '#efefef'
     },
-    extend: {},
+    extend: {}
   },
   variants: {
-    extend: {},
+    extend: {}
   },
-  plugins: [],
-};
+  plugins: []
+}
