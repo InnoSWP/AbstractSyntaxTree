@@ -27,12 +27,19 @@ To use this web application just go to the following [link](https://innoswp.gith
 - Synchronous highlighting part of code and corresponding nodes in AST and lines in PDR
 - Error message for user when code is not valid
 - Possibility to share your code with corresponding AST and PDR via link by pressing button "Share"
-- Other features coming soon...
+- Export AST to graphviz format file by pressing button "Export"
+- Constant folding
 
 ## Demonstration
 
-<p>Starting page:</p>
+<p>Starting page</p>
 <img src="./screens/starting-page-2.png">
+
+<p>Sare</p>
+<img src="./screens/share.png">
+
+<p>Exaple of graphviz</p>
+<img src="./screens/graphviz.png">
 
 ## Technologies used
 
