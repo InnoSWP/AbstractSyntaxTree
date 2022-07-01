@@ -33,7 +33,7 @@ To use this web application just go to the following [link](https://innoswp.gith
 <p>Main page</p>
 <img src="./screens/starting-page-2.png">
 
-<p>Sare</p>
+<p>Share</p>
 <img src="./screens/share.png">
 
 <p>Exaple of graphviz</p>
