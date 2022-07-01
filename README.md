@@ -30,7 +30,7 @@ To use this web application just go to the following [link](https://innoswp.gith
 
 ## Demonstration
 
-<p>Starting page</p>
+<p>Main page</p>
 <img src="./screens/starting-page-2.png">
 
 <p>Sare</p>
