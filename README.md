@@ -32,7 +32,7 @@ To use this web application just go to the following [link](https://innoswp.gith
 ## Demonstration
 
 <p>Starting page:</p>
-<img src="./screens/starting-page.png">
+<img src="./screens/starting-page-2.png">
 
 ## Technologies used
 
