@@ -116,8 +116,9 @@
 
     // Function to remove highlight
     function clearHighlight() {
-        for (let i = 0; i < get(highlightStates).length; i++)
-            $highlightStates[i] = ""
+        for (let i = 0; i < get(highlightStates).length; i++) {
+            $highlightStates[i] = "";
+        }
     }
  
     beforeUpdate(()=>{
