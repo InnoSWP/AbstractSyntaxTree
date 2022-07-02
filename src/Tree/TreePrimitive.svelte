@@ -5,9 +5,9 @@
         value = `"${value}"`
     }
     function rightClick(e){
-        let pos = { x: e.clientX, y: e.clientY };
-        let options = [{title:"TreePrimitive sample option",callback:()=>console.log("tree primitive option clicked")}]
-        contextMenu.set([options,pos])
+        // let pos = { x: e.clientX, y: e.clientY };
+        // let options = [{title:"TreePrimitive sample option",callback:()=>console.log("tree primitive option clicked")}]
+        // contextMenu.set([options,pos])
     }
 </script>
 

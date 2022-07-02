@@ -68,9 +68,9 @@
     }
 
     function rightClick(e){
-        let pos = { x: e.clientX, y: e.clientY };
-        let options = [{title:"TreeArray sample option",callback:()=>console.log("tree array option clicked")}]
-        contextMenu.set([options,pos])
+        // let pos = { x: e.clientX, y: e.clientY };
+        // let options = [{title:"TreeArray sample option",callback:()=>console.log("tree array option clicked")}]
+        // contextMenu.set([options,pos])
     }
 
     function getHighlight() {

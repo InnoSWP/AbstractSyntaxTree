@@ -60,6 +60,9 @@
 
 </script>
 
+<svelte:head>
+	<link rel="icon" type="image/png" href="/favicon.gif">
+</svelte:head>
 <Tailwind />
 <Stores />
 <MarkerPlugin />
