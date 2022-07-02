@@ -1,55 +1,55 @@
-import type { CompressedBinaryExpression, CompressedLogicalExpression, Node } from "./estreeExtension";
-import { extractChildren, setChildren } from './estreeUtils';
+import type { CompressedBinaryExpression, CompressedLogicalExpression, Node } from './estreeExtension'
+import { extractChildren, setChildren } from './estreeUtils'
 
 const operatorsToCompress = ['+', '&', '&&', '|', '||', '^', '*']
 
-export function compressBinaryExpression(expressionToCompress: Node): Node {
-    if (expressionToCompress.type != "BinaryExpression" && expressionToCompress.type != "LogicalExpression")
-        return expressionToCompress;
-    let binaryOperator = expressionToCompress.operator;
-    if (operatorsToCompress.includes(binaryOperator)) {
-        let newLeft = extractSideOfBinaryExpression(expressionToCompress.left, binaryOperator);
-        let newRight = extractSideOfBinaryExpression(expressionToCompress.right, binaryOperator)
+// Function to compress binary expression
+export function compressBinaryExpression (expressionToCompress: Node): Node {
+  if (expressionToCompress.type != 'BinaryExpression' && expressionToCompress.type != 'LogicalExpression') { return expressionToCompress }
+  const binaryOperator = expressionToCompress.operator
+  if (operatorsToCompress.includes(binaryOperator)) {
+    const newLeft = extractSideOfBinaryExpression(expressionToCompress.left, binaryOperator)
+    const newRight = extractSideOfBinaryExpression(expressionToCompress.right, binaryOperator)
 
-        const { left, right, type, ...inheritedPart } = expressionToCompress;
-        if (expressionToCompress.type == "BinaryExpression") {
-            return {
-                ...inheritedPart,
-                type: "CompressedBinaryExpression",
-                operands: [...newLeft, ...newRight],
-            } as CompressedBinaryExpression;
-        } else {
-            return {
-                ...inheritedPart,
-                type: "CompressedLogicalExpression",
-                operands: [...newLeft, ...newRight],
-            } as CompressedLogicalExpression;
-        }
-    }
-    return expressionToCompress;
-}
-
-function extractSideOfBinaryExpression(side: Node, operator: string): Node[] {
-    if (side.type == "CompressedBinaryExpression" || side.type == "CompressedLogicalExpression") {
-        if (side.operator == operator) {
-            return [...side.operands]
-        } else {
-            return [side]
-        }
+    const { left, right, type, ...inheritedPart } = expressionToCompress
+    if (expressionToCompress.type == 'BinaryExpression') {
+      return {
+        ...inheritedPart,
+        type: 'CompressedBinaryExpression',
+        operands: [...newLeft, ...newRight]
+      } as CompressedBinaryExpression
     } else {
-        return [side]
+      return {
+        ...inheritedPart,
+        type: 'CompressedLogicalExpression',
+        operands: [...newLeft, ...newRight]
+      } as CompressedLogicalExpression
     }
+  }
+  return expressionToCompress
 }
 
-export function compressBinaryExpressionsInTree(tree: Node): Node {
+// Function to extract side of given binary expression
+function extractSideOfBinaryExpression (side: Node, operator: string): Node[] {
+  if (side.type == 'CompressedBinaryExpression' || side.type == 'CompressedLogicalExpression') {
+    if (side.operator == operator) {
+      return [...side.operands]
+    } else {
+      return [side]
+    }
+  } else {
+    return [side]
+  }
+}
 
-    let oldChildren = extractChildren(tree);
-    let compressedChildren = oldChildren.map(child => compressBinaryExpressionsInTree(child));
+// Function to compress binary expression in tree
+export function compressBinaryExpressionsInTree (tree: Node): Node {
+  const oldChildren = extractChildren(tree)
+  const compressedChildren = oldChildren.map(child => compressBinaryExpressionsInTree(child))
 
-    setChildren(tree, compressedChildren);
+  setChildren(tree, compressedChildren)
 
-    if (tree.type == "BinaryExpression" || tree.type == "LogicalExpression")
-        tree = compressBinaryExpression(tree);
+  if (tree.type == 'BinaryExpression' || tree.type == 'LogicalExpression') { tree = compressBinaryExpression(tree) }
 
-    return tree;
+  return tree
 }

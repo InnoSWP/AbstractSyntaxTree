@@ -3,10 +3,10 @@
     import type {Node} from './Estree/estreeExtension'
     import { extractChildren } from './Estree/estreeUtils';
 
-    import { afterUpdate, beforeUpdate } from "svelte";
+    import { beforeUpdate } from "svelte";
     import { get } from "svelte/store";
     import type {Pattern} from 'estree'
-    import { arrayHighlight, nodeIndex, highlightStates } from "./Stores.svelte";
+    import { arrayHighlight, nodeIndex, highlightStates, storedArrayHighlight } from "./Stores.svelte";
 
     let hfrom: number, hto: number
     let src: string
@@ -15,6 +15,7 @@
     export let tree: Program = null
     $: PDR = generatePDR(tree)
 
+    // The function to travrse nodes in tree of program
     function inOrderTraversal(tree: Program): [number, string, string, [number, number]][] {
         type entry = [number, string, string, [number, number]]
         let index: number = 0
@@ -43,6 +44,7 @@
         return aux(tree, 0, []);
     }
 
+    // Function to generate coordinates of borders for PDR
     function generateCoordinates(depths: number[]): number[][] {
         let result: number[][] = []
         let maxDepth = Math.max(...depths)
@@ -60,6 +62,7 @@
         return result.map((e, i) => e.fill(0, depths[i]+1))
     }
 
+    // Function to generate PDR for program
     function generatePDR(tree: Program): [number, string, string, [number, number], ...number[]][] {
         if(tree == null) {
             return []
@@ -73,18 +76,22 @@
         return result
     }
 
+    // Function to highlight PDR
     function handleMouseEnter(index: number, [from, to]: [number, number]) {
+        clearHighlight()
         arrayHighlight.set([[from, to], "arr"])
         highlightFromRoot(index)
     }
 
+    // Function to remove highlighting in PDR
     function handleMouseLeave() {
-        arrayHighlight.set([[0, 0], "arr"])
         clearHighlight()
+        arrayHighlight.set($storedArrayHighlight)
     }
 
+    // Function to check child of node
     function isChild(ind1: number, ind2: number): boolean {
-        if (ind1 == ind2)
+        if (ind1 == ind2 || ind1 >= PDR.length || ind2 >= PDR.length)
             return false
         for (let i = 4; i < PDR[ind1].length && PDR[ind1][i] > 0; i++) {
             if (PDR[ind1][i] != PDR[ind2][i])
@@ -93,22 +100,40 @@
         return true
     }
 
+    // Function to highlight all elements from given root
     function highlightFromRoot(index: number) {
         $highlightStates[index] = "highlightedRoot"
+        let minfrom = PDR[index][3][0], maxto = PDR[index][3][1]
         for (let i = 0; i < $highlightStates.length; i++) {
-            if (isChild(index, i)){
+            if (isChild(index, i)) {
                 $highlightStates[i] = "highlighted"
+                minfrom = Math.min(minfrom, PDR[i][3][0])
+                maxto = Math.max(maxto, PDR[i][3][1])
             }
         }
+        $arrayHighlight[0] = [minfrom, maxto]
     }
 
+    // Function to remove highlight
     function clearHighlight() {
-        for (let i = 0; i < get(highlightStates).length; i++){
-            $highlightStates[i] = ""
+        for (let i = 0; i < get(highlightStates).length; i++) {
+            $highlightStates[i] = "";
         }
     }
-
+ 
     beforeUpdate(()=>{
+        if (src == "code") {
+            clearHighlight()
+
+            if (hto - hfrom > 0)
+                for (let i = PDR.length - 1; i > -1; i--) {
+                    if (PDR[i][3][0] <= hfrom && hto <= PDR[i][3][1]) {
+                        $highlightStates[i] = "highlightedRoot"
+                        break
+                    }
+                }
+        }
+
         let index = $highlightStates.findIndex(e => e == "highlightedRoot")
         if (index > -1) {
             highlightFromRoot(index)
@@ -163,6 +188,7 @@
 </style>
 
 <script lang="ts" context="module">
+    // Function to extract values of childern from node
     export function extractValue(n: Node): string {
         if(n == null) {
             return "";
@@ -242,8 +268,8 @@
         }
     }
 
-
-    function extractValuesFromPattern(pattern: Pattern) {
+    // Function to extract the names of parametrs from given pattern
+    function extractValuesFromPattern(pattern: Pattern) : string[] {
         switch (pattern.type) {
             case "Identifier":
                 return [pattern.name];
