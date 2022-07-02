@@ -36,7 +36,7 @@ To use this web application just go to the following [link](https://innoswp.gith
 <p>Share</p>
 <img src="./screens/share.png">
 
-<p>Exaple of graphviz</p>
+<p>Exaple of graphviz. You can render the graphviz file yourself using <a href="https://dreampuf.github.io/GraphvizOnline/">this tool</a>.</p>
 <img src="./screens/graphviz.png">
 
 ## Technologies used
