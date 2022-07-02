@@ -11,10 +11,12 @@ export function generateGraphviz (tree: Node) {
   const Tree = new gr.Subgraph('Tree')
   G.addSubgraph(Tree)
 
+  // Function to generate .dot file for viewing tree in Graphviz
   function addAllNodes (tree: Node) {
     const curNode = new gr.Node(tree.type.toString() + '\n' + extractValue(tree), {
       // [gr.attribute.color]: 'black'
     })
+    // Function to add all nodes in .dot file
     extractChildren(tree).forEach(element => {
       if (extractChildren(element).length == 0) {
         const leaf = new gr.Node(element.type.toString() + '\n' + extractValue(element), {

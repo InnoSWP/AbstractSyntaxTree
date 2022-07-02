@@ -10,6 +10,7 @@
     export let parent: Node
 
 
+    // Function to calculate the range of tree array
     function calculateRange(): {from: number, to: number} {
         let from, to
         for(let el of value) {
@@ -30,10 +31,12 @@
         return {from:from, to:to}
     }
 
+    // Function to change state of tree array (if it expanded or not)
     function toggle() {
         expanded = !expanded
     }
 
+    // Function to check if tree array is primitive
     function isPrimitive(val): boolean {
         if(val == null) {
             return true;
@@ -46,6 +49,7 @@
         return true;
     }
 
+    // Function to hangle mouse position when it enter tree array zone
     function handleMouseEnter() {
         clearHighlight()
         let range = calculateRange()
@@ -57,23 +61,27 @@
         arrayHighlight.set([[range.from, range.to], "tree"])
     }
 
+    // Function to clear highlight from tree array
     function clearHighlight() {
         for (let i = 0; i < get(highlightStates).length; i++){
             $highlightStates[i] = ""
         }
     }
 
+    // Function to hangle mouse position when it leave tree array zone
     function handleMouseLeave() {
         clearHighlight()
         arrayHighlight.set($storedArrayHighlight)
     }
 
+    // Function to handle click RMB on array tree zone
     function rightClick(e){
         let pos = { x: e.clientX, y: e.clientY };
         let options = [{title:"TreeArray sample option",callback:()=>console.log("tree array option clicked")}]
         contextMenu.set([options,pos])
     }
 
+    // Function to highlight all elements in tree array
     function getHighlight() {
         value.forEach(element => {
             if ($highlightStates[$nodeIndex.get(element)] == "highlighted")
