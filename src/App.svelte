@@ -91,7 +91,7 @@
   <div class="h-screen w-4/12">
      <ArrayRepresentation bind:tree />
      <div class="absolute bottom-0 bg-treebg w-4/12">
-        <iframe src="https://ghbtns.com/github-btn.html?user=innoswp&repo=asbtractsyntaxtree&type=star&count=true&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
+        <iframe src="https://ghbtns.com/github-btn.html?user=innoswp&repo=abstractsyntaxtree&type=star&count=true&size=large" frameborder="0" scrolling="0" width="170" height="30" title="GitHub"></iframe>
       </div>
   </div>
 
